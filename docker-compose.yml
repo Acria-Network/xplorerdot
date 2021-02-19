@@ -1,0 +1,40 @@
+version: "2.4"
+
+services:
+  subscan-api:
+    build: .
+    image: subscan/api
+    environment: &app_base
+      MYSQL_HOST: mysql
+      MYSQL_PASS: 'helloload'
+      MYSQL_DB: 'subscan'
+      REDIS_ADDR: redis:6379
+      CHAIN_WS_ENDPOINT: 'wss://crab.darwinia.network'
+      NETWORK_NODE: 'crab'
+      WEB_HOST: 'http://subscan-api:4399'
+      DEPLOY_ENV: 'prod'
+    ports:
+      - '4399:4399'
+    networks:
+      - app_net
+  subscan-observer:
+    environment:
+      <<: *app_base
+    image: subscan/api
+    command: ["python","run.py","substrate"]
+    networks:
+      - app_net
+
+  subscan-static:
+    build:
+      context: ./ui
+    environment:
+      NODE_ENV: 'production'
+    ports:
+      - '80:80'
+    networks:
+      - app_net
+
+networks:
+  app_net:
+    external: true
