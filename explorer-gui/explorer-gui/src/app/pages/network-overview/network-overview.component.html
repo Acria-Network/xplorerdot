@@ -1,0 +1,71 @@
+<div class="container">
+  <div class="columns network-overview">
+      <div class="column is-8">
+          <section id="list">
+              <div class="card ">
+                  <header class="card-header">
+                      <p class="card-header-title">
+                          {{ 'Network-overview.Networks' | translate }}
+                      </p>
+                  </header>
+                  <div class="card-table">
+                      <div class="content">
+                          <app-loading-box *ngIf="networks?.is_loading"></app-loading-box>
+                          <table class="table is-fullwidth is-striped" *ngIf="networks?.data.length > 0">
+                               <thead>
+                                <tr>
+                                  <th></th>
+                                  <th>{{ 'Network-overview.Name' | translate }}</th>
+                                  <th></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                  <tr *ngFor="let network of networks.data; trackBy: networks.trackBy" [ngClass]="{
+                                    'explore-westend': network.attributes.network_id == 'westend' || network.attributes.network_id == 'westend-m2',
+                                    'explore-kusama': ['kusama', 'kusama-cc1', 'kusama-cc2', 'kusama-cc3', 'kusama-cc4', 'kusama-cc5'].includes(network.attributes.network_id),
+                                    'explore-polkadot': ['polkadot', 'polkadot-cc1', 'polkadot-cc2', 'polkadot-cc3', 'polkadot-cc4', 'polkadot-cc5'].includes(network.attributes.network_id),
+                                    'explore-edgeware': network.attributes.network_id == 'edgeware' || network.attributes.network_id == 'edgeware-berlin',
+                                    'explore-edgeware-testnet': network.attributes.network_id == 'edgeware-testnet',
+                                    'explore-straightedge': network.attributes.network_id == 'straightedge',
+                                    'explore-darwinia': network.attributes.network_id == 'darwinia',
+                                    'explore-kulupu': network.attributes.network_id == 'kulupu',
+                                    'explore-miniplasm': network.attributes.network_id == 'miniplasm' || network.attributes.network_id == 'plasm-testnet' || network.attributes.network_id == 'plasm-testnet-v3',
+                                    'explore-acala': network.attributes.network_id == 'acala' || network.attributes.network_id == 'acala-mandala' || network.attributes.network_id == 'acala-mandala-tc2',
+                                    'explore-nodle': network.attributes.network_id == 'nodle' || network.attributes.network_id == 'nodle-arcadia',
+                                    'explore-centrifuge': network.attributes.network_id == 'centrifuge' || network.attributes.network_id == 'centrifuge-amber' || network.attributes.network_id == 'centrifuge-amber-cc2',
+                                    'explore-robonomics': network.attributes.network_id == 'robonomics' || network.attributes.network_id == 'robonomics-testnet',
+                                    'explore-joystream': network.attributes.network_id == 'joystream' || network.attributes.network_id == 'joystream-testnet',
+                                    'explore-datahighway': network.attributes.network_id == 'datahighway' || network.attributes.network_id == 'datahighway-testnet',
+                                    'explore-encointer': network.attributes.network_id == 'encointer' || network.attributes.network_id == 'encointer-gesell',
+                                    'explore-other': network.attributes.network_id == 'dev'
+                                  }">
+                                      <td width="5%">
+                                        <i *ngIf="network.attributes.chain_type == 'para'" class="fa fa-project-diagram network-icon" title="Parachain"></i>
+                                        <i *ngIf="network.attributes.chain_type == 'relay'" class="fa fa-globe network-icon" title="Relay chain"></i>
+                                      </td>
+                                      <td>{{ network.attributes.name }}</td>
+                                      <td width="5%"><a class="button is-small is-primary" routerLink="/{{ network.attributes.network_id }}">{{ 'Network-overview.Explore' | translate }}</a></td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              </div>
+          </section>
+      </div>
+    <div class="column is-4">
+      <div class="card">
+        <div class="card-image">
+          <figure class="image" >
+            <img src="assets/logo-light.png" alt="Placeholder image">
+          </figure>
+        </div>
+        <div class="card-content">
+          <div class="content">
+            {{ 'Network-overview.IntroductionText' | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,53 @@
+<div class="columns">
+    <div class="column is-12">
+       <app-polkascan-header></app-polkascan-header>
+        <section class="info-tiles">
+            <div class="tile is-ancestor has-text-centered">
+                <div class="tile is-parent is-2-tablet">
+                    <article class="tile is-child box">
+                        <span class="icon">
+                            <i class="fa fa-cogs fa-2x"></i>
+                        </span>
+                        <p class="subtitle"><button (click)="startHarvester()" class="button is-primary">Process blocks in harvester queue</button></p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <app-loading-box *ngIf="!harvesterQueue"></app-loading-box>
+
+            <div class="is-12" *ngIf="harvesterQueue">
+                <div class="card events-card">
+                    <header class="card-header">
+                        <p class="card-header-title">
+                            {{ 'Harvester-admin.Harvester queue' | translate }}
+                        </p>
+
+                    </header>
+                    <div class="card-table">
+                        <div class="content">
+                            <table class="table is-fullwidth is-striped">
+                                <thead>
+                                  <th></th>
+                                  <th>{{ 'Harvester-admin.From' | translate }}</th>
+                                  <th>{{ 'Harvester-admin.To' | translate }}</th>
+                                <th></th>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of harvesterQueue.data.block_process_queue">
+                                        <td width="5%"><i class="fa fa-cube"></i></td>
+                                        <td >#{{ item.from }}</td>
+                                        <td >#{{ item.to }}</td>
+                                        <td width="5%"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

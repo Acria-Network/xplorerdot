@@ -1,0 +1,22 @@
+<div *ngIf="account?.attributes">
+  <app-identicon [accountId]="account.attributes.id"></app-identicon>
+  <div class="address-info">
+    <div class="name">
+      <div class="identity-judgement" *ngIf="account.attributes.identity_display">
+        <i *ngIf="account.attributes.identity_judgement_good > 0 && account.attributes.identity_judgement_bad == 0" class="fa fa-check-circle" style="color: forestgreen" title="{{ account.attributes.identity_judgement_good }} positive judgements"></i>
+        <i *ngIf="account.attributes.identity_judgement_bad > 0" class="fa fa-minus-circle" style="color: brown" title="{{ account.attributes.identity_judgement_bad }} negative judgements"></i>
+        <i *ngIf="account.attributes.identity_judgement_good == 0 && account.attributes.identity_judgement_bad == 0" class="fa fa-minus-circle" style="color: gray" title="No judgements provided"></i>
+      </div>
+      <div class="display-name" [ngClass]="{
+      'has-identity': account.attributes.identity_display,
+      'judgement-pos': account.attributes.identity_judgement_good > 0,
+      'judgement-neg': account.attributes.identity_judgement_bad > 0
+      }">{{ getDisplayName() }}</div>
+
+      <div class="sub-ident-name" *ngIf="account.attributes.parent_identity">
+      / {{ account.attributes.subidentity_display }}
+      </div>
+    </div>
+    <div class="index">{{ getIndex() }}</div>
+  </div>
+</div>

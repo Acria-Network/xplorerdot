@@ -1,0 +1,28 @@
+<div class="column is-12">
+    <app-polkascan-header></app-polkascan-header>
+    <div *ngIf="chart$ | async as chart">
+        <section class="info-tiles">
+          <div class="card events-card">
+              <header class="card-header">
+                  <p class="card-header-title">
+                      {{ chart.attributes.title }}
+                  </p>
+                  <a  class="card-header-icon" aria-label="more options">
+                 <span class="icon"><i class="fa fa-chart-bar fa-2x"></i></span>
+                </a>
+              </header>
+              <div class="card-table" *ngIf="chart">
+                  <app-loading-box *ngIf="chart.is_loading"></app-loading-box>
+                  <div class="content" *ngIf="chart.attributes.data">
+                     <app-chart
+                               [analyticsChart]="chart$"
+                               [xAxisType]="chart.attributes.data.x_axis_type"
+                               [themeColor] = 'networkColor'
+                     >
+                    </app-chart>
+                  </div>
+              </div>
+          </div>
+        </section>
+    </div>
+</div>

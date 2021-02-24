@@ -1,0 +1,29 @@
+<ng-container [ngSwitch]="item.type">
+  <div *ngSwitchCase="'Address'"><a routerLink="{{ networkURLPrefix }}/account/{{ item.value }}" class="address-mobile-format"><app-identicon [accountId]="item.orig_value"></app-identicon> {{ item.value }}</a></div>
+  <div *ngSwitchCase="'AuthorityId'"><a routerLink="{{ networkURLPrefix }}/account/{{ item.value }}" class="address-mobile-format"><app-identicon [accountId]="item.orig_value"></app-identicon> {{ item.value }}</a></div>
+  <div *ngSwitchCase="'<Lookup as StaticLookup>::Source'"><a routerLink="{{ networkURLPrefix }}/account/{{ item.value }}" class="address-mobile-format"><app-identicon [accountId]="item.orig_value"></app-identicon> {{ item.value }}</a></div>
+  <div *ngSwitchCase="'AccountId'"><a routerLink="{{ networkURLPrefix }}/account/{{ item.value }}" class="address-mobile-format"><app-identicon [accountId]="item.orig_value"></app-identicon> {{ item.value }}</a></div>
+  <div *ngSwitchCase="'PropIndex'"><a routerLink="{{ networkURLPrefix }}/democracy/proposal/{{ item.value }}">Proposal #{{ item.value }}</a></div>
+  <div *ngSwitchCase="'ReferendumIndex'"><a routerLink="{{ networkURLPrefix }}/democracy/referendum/{{ item.value }}">Referendum #{{ item.value }}</a></div>
+  <div *ngSwitchCase="'Compact<ReferendumIndex>'"><a routerLink="{{ networkURLPrefix }}/democracy/referendum/{{ item.value }}">Referendum #{{ item.value }}</a></div>
+  <div *ngSwitchCase="'SessionIndex'"><a routerLink="{{ networkURLPrefix }}/session/session/{{ item.value }}">Session #{{ item.value }}</a></div>
+  <div *ngSwitchCase="'BlockNumber'"><a routerLink="{{ networkURLPrefix }}/block/{{ item.value }}">Block #{{ item.value }}</a></div>
+  <div *ngSwitchCase="'AccountIndex'"><a routerLink="{{ networkURLPrefix }}/indices/account/{{ item.value }}">Account index {{ item.value }}</a></div>
+  <div *ngSwitchCase="'EthereumAddress'"><a href="https://etherscan.io/address/0x{{ item.value }}" target="_blank">Ethereum Address: 0x{{ item.value }}</a></div>
+  <div *ngSwitchCase="'Balance'">{{ formatBalance(item.value) | number:'1.0-15'}} {{ networkTokenSymbol }}</div>
+  <div *ngSwitchCase="'Compact<Balance>'">{{ formatBalance(item.value) | number:'1.0-15'}} {{ networkTokenSymbol }}</div>
+  <div *ngSwitchCase="'Compact<BalanceOf>'">{{ formatBalance(item.value) | number:'1.0-15'}} {{ networkTokenSymbol }}</div>
+  <div *ngSwitchCase="'Compact<Moment>'">{{ item.value | date:'medium' }}</div>
+  <div *ngSwitchCase="'Bytes'"><markdown [data]="item.value"></markdown></div>
+  <div *ngSwitchCase="'DownloadableBytesHash'"><a routerLink="{{ networkURLPrefix }}/extrinsic-param/download/{{ item.value }}">Download binary</a></div>
+  <div *ngSwitchCase="'bool'">
+    <i *ngIf="item.value" class="fa fa-check" style="color: forestgreen"></i>
+    <i *ngIf="!item.value" class="fa fa-times" style="color: darkred"></i>
+  </div>
+  <div *ngSwitchDefault><app-struct
+    [struct]="item.value"
+    [networkTokenDecimals]="networkTokenDecimals"
+    [networkTokenSymbol]="networkTokenSymbol"
+    [networkURLPrefix]="networkURLPrefix"
+  ></app-struct></div>
+</ng-container>

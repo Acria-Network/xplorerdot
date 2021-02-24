@@ -1,0 +1,3 @@
+[submodule "explorer-gui"]
+	path = explorer-gui
+	url = https://github.com/polkascan/polkascan-explorer-gui.git

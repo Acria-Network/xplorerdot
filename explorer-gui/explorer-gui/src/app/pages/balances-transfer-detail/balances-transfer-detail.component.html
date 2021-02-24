@@ -1,0 +1,51 @@
+<div class="column is-12">
+    <app-polkascan-header></app-polkascan-header>
+    <div *ngIf="balanceTransfer$ | async as balanceTransfer">
+        <section class="info-tiles">
+          <div class="card events-card">
+              <header class="card-header">
+                  <p class="card-header-title">
+                      {{ 'BalanceTransfer.Balance transfer' | translate }} "{{ balanceTransfer.id }}"
+                  </p>
+                  <a  class="card-header-icon" aria-label="more options">
+                 <span class="icon"><i class="fa fa-exchange-alt fa-2x"></i></span>
+                </a>
+              </header>
+              <div class="card-table" *ngIf="balanceTransfer.attributes">
+                  <div class="content">
+                      <table class="table is-fullwidth is-striped">
+                          <tbody>
+                            <tr>
+                              <td width="20%">{{ 'BalanceTransfer.Block' | translate }}</td>
+                              <td><a routerLink="{{ networkURLPrefix }}/block/{{ balanceTransfer.attributes.block_id }}">{{ balanceTransfer.attributes.block_id }}</a></td>
+                            </tr>
+                            <tr>
+                              <td>{{ 'BalanceTransfer.Sender' | translate }}</td>
+                              <td>
+                                  <a *ngIf="balanceTransfer.attributes.sender" routerLink="{{ networkURLPrefix }}/account/{{ balanceTransfer.attributes.sender.attributes.address }}" class="address-mobile-format"><app-address [account]="balanceTransfer.attributes.sender"></app-address></a>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>{{ 'BalanceTransfer.Destination' | translate }}</td>
+                              <td><a routerLink="{{ networkURLPrefix }}/account/{{ balanceTransfer.attributes.destination?.attributes.address }}" class="address-mobile-format"><app-address [account]="balanceTransfer.attributes.destination"></app-address></a></td>
+                            </tr>
+                            <tr>
+                              <td>{{ 'BalanceTransfer.Value' | translate }}</td>
+                              <td>{{ formatBalance(balanceTransfer.attributes.value) | number:'1.0-15' }} {{ networkTokenSymbol }}</td>
+                            </tr>
+                             <tr>
+                              <td>{{ 'BalanceTransfer.Fee' | translate }}</td>
+                              <td>{{ formatBalance(balanceTransfer.attributes.fee) | number:'1.0-15' }} {{ networkTokenSymbol }}</td>
+                            </tr>
+                            <tr>
+                              <td width="20%">{{ 'BalanceTransfer.Event ID' | translate }}</td>
+                              <td><a routerLink="{{ networkURLPrefix }}/event/{{ balanceTransfer.attributes.event_idx }}">{{ balanceTransfer.attributes.event_idx }}</a></td>
+                            </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+        </section>
+    </div>
+</div>

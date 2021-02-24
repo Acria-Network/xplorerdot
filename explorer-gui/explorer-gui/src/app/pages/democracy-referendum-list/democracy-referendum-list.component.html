@@ -1,0 +1,61 @@
+<div class="columns">
+    <div class="column is-12">
+        <app-polkascan-header></app-polkascan-header>
+        <section>
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'Democracy-referendum-list.Democracy Referenda' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="list" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-person-booth fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="referenda?.is_loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="referenda?.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'Democracy-referendum-list.Referendum ID' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'Democracy-referendum-list.Created at Block' | translate }}</th>
+                                <th>{{ 'Democracy-referendum-list.Vote Threshold' | translate }}</th>
+                                <th>{{ 'Democracy-referendum-list.Status' | translate }}</th>
+                                <th>{{ 'Democracy-referendum-list.Success' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let referendum of referenda.data; trackBy: referenda.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-person-booth"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/democracy/referendum/{{ referendum.attributes.id }}">{{ referendum.attributes.id }}</a></td>
+                                    <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/block/{{ referendum.attributes.created_at_block }}">{{ referendum.attributes.created_at_block }}</a></td>
+                                    <td>
+                                      {{ referendum.attributes.vote_threshold }}
+                                    </td>
+                                    <td>
+                                      {{ referendum.attributes.status }}
+                                    </td>
+                                    <td>
+                                      <i *ngIf="referendum.attributes.success === true" class="fa fa-check" style="color: forestgreen"></i>
+                                      <i *ngIf="referendum.attributes.success === false" class="fa fa-times" style="color: darkred"></i>
+                                    </td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/democracy/referendum/{{ referendum.attributes.id }}">{{ 'Democracy-referendum-list.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="no-items" *ngIf="referenda?.data.length == 0 && !referenda.is_loading">{{ 'Democracy-referendum-list.No items' | translate }}</div>
+                    </div>
+                </div>
+                <footer class="card-footer" *ngIf="referenda?.data.length == 25">
+                    <a routerLink="." [queryParams]="{ page: currentPage + 1}" class="card-footer-item">{{ 'Democracy-referendum-list.View next' | translate }}</a>
+                </footer>
+            </div>
+        </section>
+    </div>
+</div>

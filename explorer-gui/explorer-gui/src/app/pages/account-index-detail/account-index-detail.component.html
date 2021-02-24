@@ -1,0 +1,52 @@
+<div class="column is-12">
+    <app-polkascan-header></app-polkascan-header>
+    <div *ngIf="accountIndex$ | async as accountIndex">
+        <section class="info-tiles">
+          <div class="card events-card">
+              <header class="card-header" *ngIf="accountIndex">
+                  <p class="card-header-title">
+                    {{ 'AccountIndexDetail.Account Index' | translate }} {{ accountIndex.attributes.short_address }}
+                  </p>
+                  <a  class="card-header-icon" aria-label="more options">
+                 <span class="icon"><i class="fa fa-id-card-alt fa-2x"></i></span>
+                </a>
+              </header>
+              <div class="card-table" *ngIf="accountIndex">
+                  <div class="content">
+                      <table class="table is-fullwidth is-striped">
+                          <tbody>
+                              <tr>
+                                <td>{{ 'AccountIndexDetail.Account' | translate }}</td>
+                                <td *ngIf="!accountIndex.attributes.address">{{ 'AccountIndexDetail.N/A' | translate }}</td>
+                                <td *ngIf="accountIndex.attributes.account"><a routerLink="{{ networkURLPrefix }}/account/{{ accountIndex.attributes.account?.attributes.address }}"><app-address [account]="accountIndex.attributes?.account"></app-address></a></td>
+                              </tr>
+                              <tr>
+                                <td>{{ 'AccountIndexDetail.Is reclaimable' | translate }}</td>
+                                <td>
+                                  <i *ngIf="accountIndex.attributes.is_reclaimable" class="fa fa-check" style="color: forestgreen"></i>
+                                  <i *ngIf="!accountIndex.attributes.is_reclaimable" class="fa fa-times" style="color: darkred"></i>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>{{ 'AccountIndexDetail.Is reclaimed' | translate }}</td>
+                                <td>
+                                  <i *ngIf="accountIndex.attributes.is_reclaimed" class="fa fa-check" style="color: forestgreen"></i>
+                                  <i *ngIf="!accountIndex.attributes.is_reclaimed" class="fa fa-times" style="color: darkred"></i>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td width="20%">{{ 'AccountIndexDetail.Created at block' | translate }}</td>
+                                <td><a routerLink="{{ networkURLPrefix }}/block/{{ accountIndex.attributes.created_at_block }}">{{ accountIndex.attributes.created_at_block }}</a></td>
+                              </tr>
+                              <tr>
+                                <td width="20%">{{ 'AccountIndexDetail.Updated at block' | translate }}</td>
+                                <td><a routerLink="{{ networkURLPrefix }}/block/{{ accountIndex.attributes.updated_at_block }}">{{ accountIndex.attributes.updated_at_block }}</a></td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+        </section>
+    </div>
+</div>

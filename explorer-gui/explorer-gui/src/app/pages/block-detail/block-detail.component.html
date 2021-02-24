@@ -1,0 +1,245 @@
+<div *ngIf="block$ | async as block">
+
+  <app-loading-box *ngIf="block.is_loading && !resourceNotFound"></app-loading-box>
+  <div class="card" *ngIf="resourceNotFound">
+      <header class="card-header">
+          <p class="card-header-title">
+              {{ 'Block-Detail.Block not found' | translate }}
+          </p>
+          <a  class="card-header-icon" aria-label="more options">
+           <span class="icon">
+              <i class="fa fa-cube fa-2x" aria-hidden="true"></i>
+            </span>
+          </a>
+      </header>
+      <div class="card-table">
+          <div class="content">
+            <div class="no-items">{{ 'Block-Detail.Block "{block}" not found' | translate:{block: blockId} }}</div>
+          </div>
+      </div>
+  </div>
+  <div *ngIf="!block.is_loading && !resourceNotFound">
+    <section class="info-tiles">
+      <div class="card events-card">
+          <header class="card-header">
+              <p class="card-header-title">
+                  {{ 'Block-Detail.Block' | translate }} #{{ block.id }}
+              </p>
+            <a [routerLink]="" fragment="details" class="card-header-icon" aria-label="more options">
+             <span class="icon"><i class="fa fa-cube fa-2x"></i></span>
+            </a>
+          </header>
+          <div class="card-table" id="details" *ngIf="block">
+              <div class="content">
+                  <table class="table is-fullwidth is-striped">
+                      <tbody>
+                          <tr>
+                              <td width="15%">{{ 'Block-Detail.Timestamp' | translate }}</td>
+                              <td>{{ block.attributes.datetime | date:'medium'}}</td>
+                          </tr>
+                          <tr>
+                              <td width="15%">{{ 'Block-Detail.Hash' | translate }}</td>
+                              <td><div class="mobile-hash-format">{{block.attributes.hash}}</div></td>
+                          </tr>
+                          <tr>
+                              <td>{{ 'Block-Detail.Parent hash' | translate }}</td>
+                              <td><a *ngIf="block.id > 0" routerLink="{{ networkURLPrefix }}/block/{{ block.id - 1 }}" class="mobile-hash-format">{{block.attributes.parent_hash}}</a></td>
+                          </tr>
+                          <tr>
+                              <td>{{ 'Block-Detail.State Root' | translate }}</td>
+                              <td><div class="mobile-hash-format">{{block.attributes.state_root}}</div></td>
+                          </tr>
+                          <tr>
+                              <td>{{ 'Block-Detail.Extrinsics Root' | translate }}</td>
+                              <td><div class="mobile-hash-format">{{block.attributes.extrinsics_root}}</div></td>
+                          </tr>
+                          <tr>
+                              <td>{{ 'Block-Detail.Transactions' | translate }}</td>
+                              <td >{{ block.attributes.count_extrinsics_signed }}</td>
+                          </tr>
+                          <tr>
+                              <td>{{ 'Block-Detail.Total module events' | translate }}</td>
+                              <td >{{block.attributes.count_events_module}}</td>
+                          </tr>
+                          <tr>
+                              <td>{{ 'Block-Detail.Runtime version' | translate }}</td>
+                              <td><a routerLink="{{ networkURLPrefix }}/runtime/{{ block.attributes.spec_version_id }}">{{block.attributes.spec_version_id}}</a></td>
+                          </tr>
+                          <ng-container *ngIf="blockTotal$ | async as blockTotal">
+                          <tr>
+                              <td>{{ 'Block-Detail.Block time' | translate }}</td>
+                              <td >{{blockTotal.attributes.blocktime }} {{ 'Block-Detail.seconds' | translate }}</td>
+                          </tr>
+                          <tr>
+                              <td>{{ 'Block-Detail.Session ID' | translate }}</td>
+                              <td><a routerLink="{{ networkURLPrefix }}/session/session/{{ blockTotal.attributes.session_id }}">{{ blockTotal.attributes.session_id }}</a></td>
+                          </tr>
+                          <tr *ngIf="blockTotal.attributes.author">
+                              <td>{{ 'Block-Detail.Block Author' | translate }}</td>
+                              <td><a routerLink="{{ networkURLPrefix }}/account/{{ blockTotal.attributes.author_account?.attributes.address }}" class="address-mobile-format"><app-address [account]="blockTotal.attributes.author_account"></app-address></a></td>
+                          </tr>
+                          </ng-container>
+                      </tbody>
+                  </table>
+              </div>
+          </div>
+      </div>
+    </section>
+    <section class="info-tiles">
+      <div class="card ">
+        <div class="tabs">
+          <ul>
+            <li [ngClass]="{'is-active': currentTab == 'transactions'}" *ngIf="block.relationships.transactions.data.length > 0">
+              <a routerLink="." fragment="transactions">
+                <span class="icon is-small"><i class="fas fa-file-signature" aria-hidden="true"></i></span>
+                <span>{{ 'Block-Detail.Transactions' | translate }}</span>
+              </a>
+            </li>
+            <li [ngClass]="{'is-active': currentTab == 'inherents'}" *ngIf="block.relationships.inherents.data.length > 0">
+              <a routerLink="." fragment="inherents">
+                <span class="icon is-small"><i class="fas fa-file-alt" aria-hidden="true"></i></span>
+                <span>{{ 'Block-Detail.Inherents' | translate }}</span>
+              </a>
+            </li>
+            <li [ngClass]="{'is-active': currentTab == 'events'}" *ngIf="block.relationships.events.data.length > 0">
+              <a routerLink="." fragment="events">
+                <span class="icon is-small"><i class="fas fa-calendar-check" aria-hidden="true"></i></span>
+                <span>{{ 'Block-Detail.Events' | translate }}</span>
+              </a>
+            </li>
+            <li [ngClass]="{'is-active': currentTab == 'logs'}" *ngIf="block.relationships.logs.data.length > 0">
+              <a routerLink="." fragment="logs">
+                <span class="icon is-small"><i class="fas fa-book" aria-hidden="true"></i></span>
+                <span>{{ 'Block-Detail.Logs' | translate }}</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card-table" id="transactions" *ngIf="currentTab == 'transactions'">
+            <div class="content">
+                <table class="table is-fullwidth is-striped">
+                     <thead>
+                      <tr>
+                        <th></th>
+                        <th>{{ 'Block-Detail.Transaction ID' | translate }}</th>
+                        <th class="is-hidden-mobile">{{ 'Block-Detail.From' | translate }}</th>
+                        <th>{{ 'Block-Detail.Module' | translate }}</th>
+                        <th>{{ 'Block-Detail.Call' | translate }}</th>
+                        <th>{{ 'Block-Detail.Success' | translate }}</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let extrinsic of block.relationships.transactions.data; trackBy: block.relationships.transactions.trackBy">
+                            <td width="5%">
+                              <i *ngIf="extrinsic.attributes.signed" class="fa fa-file-signature"></i>
+                              <i *ngIf="extrinsic.attributes.unsigned" class="fa fa-file-alt"></i>
+                            </td>
+                            <td><a routerLink="{{ networkURLPrefix }}/transaction/{{ extrinsic.attributes.extrinsic_hash ? '0x' + extrinsic.attributes.extrinsic_hash : extrinsic.id }}"><div class="hash-format">0x{{ extrinsic.attributes.extrinsic_hash }}</div></a></td>
+                            <td class="is-hidden-mobile" *ngIf="extrinsic.attributes.account"><a routerLink="{{ networkURLPrefix }}/account/{{ extrinsic.attributes.account?.attributes.address }}" class="address-mobile-format"><app-address [account]="extrinsic.attributes.account"></app-address></a></td>
+                            <td class="is-hidden-mobile" *ngIf="!extrinsic.attributes.account"><a routerLink="{{ networkURLPrefix }}/account/{{ extrinsic.attributes.address }}" class="address-mobile-format"><app-identicon [accountId]="extrinsic.attributes.address_id"></app-identicon> {{ extrinsic.attributes.address }}</a></td>
+                            <td>{{ extrinsic.attributes.module_id }}</td>
+                            <td>{{ extrinsic.attributes.call_id }}</td>
+                            <td>
+                              <i *ngIf="extrinsic.attributes.success" class="fa fa-check" style="color: forestgreen"></i>
+                              <i *ngIf="extrinsic.attributes.error" class="fa fa-times" style="color: darkred"></i>
+                            </td>
+                            <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/transaction/{{ extrinsic.attributes.extrinsic_hash ? '0x' + extrinsic.attributes.extrinsic_hash : extrinsic.id }}">{{ 'Block-Detail.Details' | translate }}</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-table" id="inherents" *ngIf="currentTab == 'inherents'">
+            <div class="content">
+                <table class="table is-fullwidth is-striped">
+                     <thead>
+                      <tr>
+                        <th></th>
+                        <th>{{ 'Block-Detail.Inherent ID' | translate }}</th>
+                        <th>{{ 'Block-Detail.Module' | translate }}</th>
+                        <th>{{ 'Block-Detail.Call' | translate }}</th>
+                        <th>{{ 'Block-Detail.Success' | translate }}</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let extrinsic of block.relationships.inherents.data; trackBy: block.relationships.inherents.trackBy">
+                            <td width="5%">
+                              <i *ngIf="extrinsic.attributes.signed" class="fa fa-file-signature"></i>
+                              <i *ngIf="extrinsic.attributes.unsigned" class="fa fa-file-alt"></i>
+                            </td>
+                            <td><a routerLink="{{ networkURLPrefix }}/inherent/{{ extrinsic.attributes.extrinsic_hash ? '0x' + extrinsic.attributes.extrinsic_hash : extrinsic.id }}">{{ extrinsic.id }}</a></td>
+                            <td>{{ extrinsic.attributes.module_id }}</td>
+                            <td>{{ extrinsic.attributes.call_id }}</td>
+                            <td>
+                              <i *ngIf="extrinsic.attributes.success" class="fa fa-check" style="color: forestgreen"></i>
+                              <i *ngIf="extrinsic.attributes.error" class="fa fa-times" style="color: darkred"></i>
+                            </td>
+                            <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/inherent/{{ extrinsic.attributes.extrinsic_hash ? '0x' + extrinsic.attributes.extrinsic_hash : extrinsic.id }}">{{ 'Block-Detail.Details' | translate }}</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-table" id="events" *ngIf="currentTab == 'events'">
+            <div class="content">
+                <table class="table is-fullwidth is-striped">
+                     <thead>
+                      <tr>
+                        <th></th>
+                        <th>{{ 'Block-Detail.Event ID' | translate }}</th>
+                        <th class="is-hidden-mobile">{{ 'Block-Detail.Referenced Transaction' | translate }}</th>
+                        <th>{{ 'Block-Detail.Module' | translate }}</th>
+                        <th>{{ 'Block-Detail.Event' | translate }}</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let event of block.relationships.events.data; trackBy: block.relationships.events.trackBy">
+                            <td width="5%">
+                              <i class="fa fa-calendar-check"></i>
+                            </td>
+                            <td><a routerLink="{{ networkURLPrefix }}/event/{{ event.id }}">{{ event.id }}</a></td>
+                            <td class="is-hidden-mobile"><a *ngIf="event.attributes.extrinsic_idx" routerLink="{{ networkURLPrefix }}/transaction/{{ event.attributes.block_id }}-{{event.attributes.extrinsic_idx}}">{{ event.attributes.block_id }}-{{event.attributes.extrinsic_idx}}</a></td>
+                            <td>{{ event.attributes.module_id }}</td>
+                            <td>{{ event.attributes.event_id }}</td>
+                            <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/event/{{ event.id }}">{{ 'Block-Detail.Details' | translate }}</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-table" id="logs" *ngIf="currentTab == 'logs'">
+            <div class="content">
+                <table class="table is-fullwidth is-striped">
+                   <thead>
+                    <tr>
+                      <th></th>
+                      <th>{{ 'Block-Detail.Log ID' | translate }}</th>
+                      <th>{{ 'Block-Detail.Type' | translate }}</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                      <tr *ngFor="let log of block.relationships.logs.data; trackBy: block.relationships.logs.trackBy">
+                          <td width="5%">
+                            <i class="fa fa-book"></i>
+                          </td>
+                          <td><a routerLink="{{ networkURLPrefix }}/log/{{ log.id }}">{{ log.id }}</a></td>
+                          <td>{{ log.attributes.type }}</td>
+                          <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/log/{{ log.id }}">{{ 'Block-Detail.Details' | translate }}</a></td>
+                      </tr>
+                  </tbody>
+              </table>
+            </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+</div>

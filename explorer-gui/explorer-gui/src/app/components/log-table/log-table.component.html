@@ -1,0 +1,40 @@
+    <div *ngIf="log" class="card events-card">
+        <header class="card-header">
+            <div class="card-header-title">
+               {{ 'log-table.Log' | translate }} #{{ log.id }}
+            </div>
+            <a class="card-header-icon" aria-label="more options">
+            <span class="icon">
+              <i class="fa fa-book fa-2x"></i>
+            </span>
+          </a>
+        </header>
+        <div class="card-table">
+            <div class="content">
+                <table class="table is-fullwidth is-striped">
+                    <tbody>
+                        <tr *ngIf="context != 'block'">
+                          <td width="15%">{{ 'log-table.Block' | translate }}</td>
+                          <td><a routerLink="{{ networkURLPrefix }}/block/{{ log.attributes.block_id }}">{{ log.attributes.block_id }}</a></td>
+                        </tr>
+                        <tr>
+                          <td width="15%">{{ 'log-table.Log Index' | translate }}</td>
+                          <td>{{ log.attributes.log_idx }}</td>
+                        </tr>
+                        <tr>
+                          <td width="15%">{{ 'log-table.Type' | translate }}</td>
+                          <td>{{ log.attributes.type }}</td>
+                        </tr>
+                        <tr *ngIf="log.attributes.data">
+                          <td width="15%">{{ 'log-table.Data' | translate }}</td>
+                          <td>
+                            <app-struct
+                              [struct]="log.attributes.data.value"
+                            ></app-struct>
+                          </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>

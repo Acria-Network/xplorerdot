@@ -1,0 +1,124 @@
+<div class="columns">
+  <div class="column is-12">
+      <app-polkascan-header></app-polkascan-header>
+
+      <div *ngIf="runtimeCall$ | async as runtimeCall">
+        <section class="info-tiles">
+          <div class="card events-card">
+              <header class="card-header">
+                  <p class="card-header-title">
+                      {{ 'runtime-call-detail.Call' | translate }} "{{ runtimeCall.attributes.name }}"
+                  </p>
+                  <a  class="card-header-icon" aria-label="more options">
+                 <span class="icon"><i class="fa fa-file-alt fa-2x"></i></span>
+                </a>
+              </header>
+              <div class="card-table" *ngIf="runtimeCall">
+                  <div class="content">
+                      <table class="table is-fullwidth is-striped">
+                          <tbody>
+                              <tr>
+                                  <td width="20%">{{ 'runtime-call-detail.Name' | translate }}</td>
+                                  <td >{{runtimeCall.attributes.name}}</td>
+                              </tr>
+                              <tr>
+                                  <td>{{ 'runtime-call-detail.Module' | translate }}</td>
+                                  <td >{{runtimeCall.attributes.module_id}}</td>
+                              </tr>
+                              <tr>
+                                  <td>{{ 'runtime-call-detail.Spec version' | translate }}</td>
+                                  <td >{{runtimeCall.attributes.spec_version}}</td>
+                              </tr>
+                              <tr>
+                                  <td>{{ 'runtime-call-detail.Lookup' | translate }}</td>
+                                  <td >{{runtimeCall.attributes.lookup}}</td>
+                              </tr>
+                              <tr>
+                                  <td>{{ 'runtime-call-detail.Documentation' | translate }}</td>
+                                  <td>{{runtimeCall.attributes.documentation }}</td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+        </section>
+        <section id="call-parameters">
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'runtime-call-detail.Parameters' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="call-parameters" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-stream fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <table class="table is-fullwidth is-striped" *ngIf="runtimeCall.relationships.params.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th><{{ 'runtime-call-detail.Name' | translate }}</th>
+                                <th>{{ 'runtime-call-detail.Type' | translate }}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let param of runtimeCall.relationships.params.data; trackBy: runtimeCall.relationships.params.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-stream"></i>
+                                    </td>
+                                    <td>{{ param.attributes.name }}</td>
+                                    <td>{{ param.attributes.type}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section *ngIf="runtimeCall.relationships.recent_extrinsics.data.length > 0" id="recent-extrinsics">
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'runtime-call-detail.Recent extrinsics using call' | translate }} "{{ runtimeCall.attributes.name }}"
+                    </p>
+                    <a [routerLink]="" fragment="recent-extrinsics" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-file-alt fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <table class="table is-fullwidth is-striped">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'runtime-call-detail.ID' | translate }}</th>
+                                <th>{{ 'runtime-call-detail.Result' | translate }}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let extrinsic of runtimeCall.relationships.recent_extrinsics.data; trackBy: runtimeCall.relationships.recent_extrinsics.trackBy">
+                                    <td width="5%">
+                                      <i *ngIf="extrinsic.attributes.signed" class="fa fa-file-signature"></i>
+                                      <i *ngIf="extrinsic.attributes.unsigned" class="fa fa-file-alt"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/transaction/{{ extrinsic.attributes.extrinsic_hash ? '0x' + extrinsic.attributes.extrinsic_hash : extrinsic.id }}">{{ extrinsic.id }}</a></td>
+                                    <td>
+                                      <i *ngIf="extrinsic.attributes.success" class="fa fa-check" style="color: forestgreen"></i>
+                                      <i *ngIf="extrinsic.attributes.error" class="fa fa-times" style="color: darkred"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+      </div>
+  </div>
+</div>

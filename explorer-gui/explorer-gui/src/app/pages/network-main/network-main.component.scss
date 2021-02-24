@@ -1,0 +1,13 @@
+.network-name {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 7px 0;
+}
+
+.navbar {
+  z-index: unset;
+}

@@ -1,0 +1,90 @@
+<div class="columns">
+  <div class="column is-12">
+      <app-polkascan-header></app-polkascan-header>
+      <section class="info-tiles">
+          <div class="tile is-ancestor has-text-centered">
+              <div class="tile is-parent" *ngIf="totalTransactionsDaychart$ | async as chart">
+                  <article class="tile is-child box">
+                    <app-loading-box *ngIf="chart.is_loading"></app-loading-box>
+                    <app-chart
+                           [analyticsChart]="totalTransactionsDaychart$"
+                           [title]="'Analytics-Charts.Total transactions by day' | translate"
+                           height="200px"
+                           [themeColor] = 'networkColor'
+                           xAxisType="datetime"
+                    >
+                    </app-chart>
+                  </article>
+              </div>
+              <div class="tile is-parent" *ngIf="averageBlocktimeDaychart$ | async as chart">
+                  <article class="tile is-child box">
+                    <app-loading-box *ngIf="chart.is_loading"></app-loading-box>
+                    <app-chart
+                           [analyticsChart]="averageBlocktimeDaychart$"
+                           [title]="'Analytics-Charts.Average blocktime by day' | translate"
+                           height="200px"
+                           [themeColor] = 'networkColor'
+                           xAxisType="datetime"
+                    >
+                    </app-chart>
+                  </article>
+              </div>
+              <div class="tile is-parent is-hidden-tablet-only" *ngIf="cumulativeAccountsDayChart$ | async as chart">
+                  <article class="tile is-child box">
+                    <app-loading-box *ngIf="chart.is_loading"></app-loading-box>
+                    <app-chart
+                           [analyticsChart]="cumulativeAccountsDayChart$"
+                           title="Active accounts by day"
+                           [title]="'Analytics-Charts.Active accounts by day' | translate"
+                           height="200px"
+                           [themeColor] = 'networkColor'
+                           xAxisType="datetime"
+                    >
+                    </app-chart>
+                  </article>
+              </div>
+          </div>
+      </section>
+      <section id="list">
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'Analytics-Charts.Charts' | translate }}
+                    </p>
+                     <a [routerLink]="" fragment="list" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-chart-bar fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="!charts || charts.is_loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="charts && charts.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'Analytics-Charts.Title' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of charts.data; trackBy: charts.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-chart-bar"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/analytics/chart/{{ item.id }}">{{ item.attributes.title }}</a></td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/analytics/chart/{{ item.id }}">{{ 'Analytics-Charts.Show' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="no-items" *ngIf="charts && charts.data.length == 0 && !charts.is_loading">{{ 'Analytics-Charts.No items' | translate }}</div>
+                    </div>
+                </div>
+                <footer class="card-footer" *ngIf="charts?.data.length == 25">
+                    <a routerLink="." [queryParams]="{ page: currentPage + 1}" fragment="list" class="card-footer-item">{{ 'Analytics-Charts.View next' | translate }}</a>
+                </footer>
+            </div>
+        </section>
+  </div>
+</div>

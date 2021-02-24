@@ -1,0 +1,11 @@
+<div class="column is-12">
+    <app-polkascan-header></app-polkascan-header>
+    <section class="info-tiles">
+      <app-preimage-table
+        [preimage]="preimage$ | async"
+        [networkURLPrefix]="networkURLPrefix"
+        [networkTokenDecimals]="networkTokenDecimals"
+        [networkTokenSymbol]="networkTokenSymbol"
+      ></app-preimage-table>
+    </section>
+</div>

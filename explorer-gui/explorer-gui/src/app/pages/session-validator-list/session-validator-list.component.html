@@ -1,0 +1,50 @@
+<div class="columns">
+    <div class="column is-12">
+        <app-polkascan-header></app-polkascan-header>
+        <section>
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'session-validator-list.Validators for current session' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="list" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-user-shield fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="!validators || validators.is_loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="validators && validators.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'session-validator-list.Address' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'session-validator-list.Total bonded' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'session-validator-detail.Commission' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let validator of validators.data; trackBy: validators.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-user-shield"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/account/{{ validator.attributes.validator_stash_account?.attributes.address }}"><app-address [account]="validator.attributes.validator_stash_account"></app-address></a></td>
+                                    <td class="is-hidden-mobile">{{ formatBalance(validator.attributes.bonded_total) | number:'1.0-15'}} {{ networkTokenSymbol }}</td>
+                                    <td class="is-hidden-mobile">{{ validator.attributes.commission / 10000000 }}%</td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/session/validator/{{ validator.id }}">{{ 'session-validator-list.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="no-items" *ngIf="validators && validators.data.length == 0 && !validators.is_loading">{{ 'session-validator-list.No items' | translate }}</div>
+                    </div>
+                </div>
+                <footer class="card-footer" *ngIf="validators && validators.data.length == 25">
+                    <a routerLink="." [queryParams]="{ page: currentPage + 1}" class="card-footer-item">{{ 'Global.View next' | translate }}</a>
+                </footer>
+            </div>
+        </section>
+    </div>
+</div>

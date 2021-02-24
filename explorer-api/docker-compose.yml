@@ -1,0 +1,27 @@
+version: '3.2'
+
+services:
+
+  explorer-api:
+    build: .
+    image: polkascan-explorer-api
+    ports:
+      - '8000:8000'
+    volumes:
+      - '.:/usr/src/app'
+    command: ./start.sh
+    environment:
+      - PYTHONPATH=/usr/src/app
+      - ENVIRONMENT=dev
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:latest
+    volumes:
+      - './data/mysql:/var/lib/mysql'
+    ports:
+      - '33061:3306'
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=polkascan

@@ -1,0 +1,59 @@
+<div class="columns">
+  <div class="column is-12">
+      <app-polkascan-header></app-polkascan-header>
+
+      <div>
+        <section>
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'runtime-type-list.Runtime Types' | translate }}
+                    </p>
+                     <a [routerLink]="" fragment="list" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-stream fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="!types || types.is_loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="types && types.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'runtime-type-list.Type string' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-type-list.Runtime primitive' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-type-list.RUST primitive' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-type-list.Compatible with Polkascan' | translate }}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let type of types.data; trackBy: types.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-stream"></i>
+                                    </td>
+                                    <td>{{ type.attributes.type_string }}</td>
+                                    <td class="is-hidden-mobile">
+                                        <i *ngIf="type.attributes.is_primitive_runtime" class="fa fa-check" style="color: forestgreen"></i>
+                                      </td>
+                                    <td class="is-hidden-mobile">
+                                        <i *ngIf="type.attributes.is_primitive_core" class="fa fa-check" style="color: forestgreen"></i>
+                                    </td>
+                                    <td class="is-hidden-mobile">
+                                      <i *ngIf="type.attributes.decoder_class" class="fa fa-check" style="color: forestgreen"></i>
+                                      <i *ngIf="!type.attributes.decoder_class" class="fa fa-times" style="color: darkred"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <footer class="card-footer" *ngIf="types?.data.length == pageSize">
+                    <a routerLink="." [queryParams]="{ page: currentPage + 1}" class="card-footer-item">{{ 'Global.View next' | translate }}</a>
+                </footer>
+            </div>
+        </section>
+      </div>
+  </div>
+</div>

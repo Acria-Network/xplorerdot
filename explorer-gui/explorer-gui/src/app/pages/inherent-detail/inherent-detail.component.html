@@ -1,0 +1,54 @@
+<div class="columns">
+  <div class="column is-12" *ngIf="extrinsic$ | async as extrinsic">
+      <app-polkascan-header></app-polkascan-header>
+       <section class="info-tiles">
+        <app-extrinsic-table
+          [extrinsic]="extrinsic"
+          [networkTokenDecimals]="networkTokenDecimals"
+          [networkTokenSymbol]="networkTokenSymbol"
+          [networkURLPrefix]="networkURLPrefix"
+          title="Inherent"
+        ></app-extrinsic-table>
+       </section>
+        <section id="events" *ngIf="extrinsic.relationships.events?.data.length > 0">
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'transaction-detail.Triggered Events' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="events" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-calendar-check fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <table class="table is-fullwidth is-striped">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'Event-list.Event ID' | translate }}</th>
+                                <th>{{ 'Event-list.Module' | translate }}</th>
+                                <th>{{ 'Event-list.Event' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let event of extrinsic.relationships.events?.data; trackBy: extrinsic.relationships.events?.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-calendar-check"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/event/{{ event.id }}">{{ event.id }}</a></td>
+                                    <td>{{ event.attributes.module_id }}</td>
+                                    <td>{{ event.attributes.event_id }}</td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/event/{{ event.id }}">{{ 'Event-list.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+  </div>
+</div>

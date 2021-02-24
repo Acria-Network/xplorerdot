@@ -1,0 +1,53 @@
+<div class="columns">
+    <div class="column is-12">
+        <app-polkascan-header></app-polkascan-header>
+        <section>
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'Contract-List.Contracts' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="list" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-file-contract fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="!contracts || contracts.is_loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="contracts && contracts.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'Contract-List.Code Hash' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'Contract-List.Block' | translate }}</th>
+                                <th>{{ 'Contract-List.Verified' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let contract of contracts.data; trackBy: contracts.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-file-contract"></i>
+                                    </td>
+                                    <td>{{ contract.id }}</td>
+                                    <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/block/{{ contract.attributes.created_at_block }}">{{ contract.attributes.created_at_block }}</a></td>
+                                    <td>
+                                      <i *ngIf="contract.attributes.source" class="fa fa-check" style="color: forestgreen"></i>
+                                      <i *ngIf="!contract.attributes.source" class="fa fa-times" style="color: darkred"></i>
+                                    </td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/contracts/contract/{{ contract.id }}">{{ 'Contract-List.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="no-items" *ngIf="contracts && contracts.data.length == 0 && !contracts.is_loading">{{ 'Contract-List.No items' | translate }}</div>
+                    </div>
+                </div>
+                <footer class="card-footer" *ngIf="contracts && contracts.data.length == 25">
+                    <a routerLink="." [queryParams]="{ page: currentPage + 1}" class="card-footer-item">{{ 'Contract-List.View next' | translate }}</a>
+                </footer>
+            </div>
+        </section>
+    </div>
+</div>

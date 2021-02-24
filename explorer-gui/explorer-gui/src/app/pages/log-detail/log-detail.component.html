@@ -1,0 +1,11 @@
+<div class="columns">
+  <div class="column is-12">
+      <app-polkascan-header></app-polkascan-header>
+       <section class="info-tiles">
+        <app-log-table
+          [log]="log$ | async"
+          [networkURLPrefix]="networkURLPrefix"
+        ></app-log-table>
+       </section>
+  </div>
+</div>

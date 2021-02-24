@@ -1,0 +1,61 @@
+<div class="columns">
+    <div class="column is-12">
+        <app-polkascan-header></app-polkascan-header>
+        <section>
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'Treasury-proposal-list.Treasury proposals' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="list" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-piggy-bank fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="proposals?.is_loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="proposals?.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'Treasury-proposal-list.Proposal ID' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'Treasury-proposal-list.Created at Block' | translate }}</th>
+                                <th>{{ 'Treasury-proposal-list.Beneficiary' | translate }}</th>
+                                <th>{{ 'Treasury-proposal-list.Value' | translate }}</th>
+                                <th>{{ 'Treasury-proposal-list.Status' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let proposal of proposals.data; trackBy: proposals.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-piggy-bank"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/treasury/proposal/{{ proposal.attributes.proposal_id }}">{{ proposal.attributes.proposal_id }}</a></td>
+                                    <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/block/{{ proposal.attributes.created_at_block }}">{{ proposal.attributes.created_at_block }}</a></td>
+                                    <td>
+                                      <a *ngIf="proposal.attributes.beneficiary_account" routerLink="{{ networkURLPrefix }}/account/{{ proposal.attributes.beneficiary_account?.attributes.address }}"><app-address [account]="proposal.attributes?.beneficiary_account"></app-address></a>
+                                      <span *ngIf="!proposal.attributes.beneficiary_account" class="address-mobile-format"><app-identicon [accountId]="proposal.attributes.beneficiary_account_id"></app-identicon> {{ proposal.attributes.beneficiary_address }}</span>
+                                    </td>
+                                    <td>
+                                      {{ formatBalance(proposal.attributes.value) | number:'1.0-15'}} {{ networkTokenSymbol }}
+                                    </td>
+                                    <td>
+                                      {{ proposal.attributes.status }}
+                                    </td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/treasury/proposal/{{ proposal.attributes.proposal_id }}">{{ 'Treasury-proposal-list.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="no-items" *ngIf="proposals?.data.length == 0 && !proposals.is_loading">{{ 'Treasury-proposal-list.No items' | translate }}</div>
+                    </div>
+                </div>
+                <footer class="card-footer" *ngIf="proposals?.data.length == 25">
+                    <a routerLink="." [queryParams]="{ page: currentPage + 1}" class="card-footer-item">{{ 'Treasury-proposal-list.View next' | translate }}</a>
+                </footer>
+            </div>
+        </section>
+    </div>
+</div>

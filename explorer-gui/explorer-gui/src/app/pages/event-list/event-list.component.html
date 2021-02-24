@@ -1,0 +1,89 @@
+<div class="columns">
+    <div class="column is-12">
+        <app-polkascan-header></app-polkascan-header>
+        <section>
+            <div class="card ">
+                <header class="card-header">
+                    <div class="card-header-title">
+                        <p>{{ 'Event-list.Events' | translate }}</p>
+
+                    </div>
+
+                    <div class="card-header-icon">
+                      <div class="filters" *ngIf="runtimeModules">
+                        <div class="field has-addons">
+                          <div class="control is-expanded has-icons-left">
+                            <div class="select is-fullwidth">
+                              <select name="country" [(ngModel)]="filterModule" (ngModelChange)="selectModule($event)">
+                                <option [ngValue]="null">{{ 'Event-list.All modules' | translate }}</option>
+                                <option *ngFor="let module of runtimeModules.data" [ngValue]="module?.attributes.module_id">{{module.attributes.name}}</option>
+                              </select>
+                            </div>
+                            <span class="icon is-small is-left">
+                              <i class="fas fa-cog"></i>
+                            </span>
+                          </div>
+                          <div class="control is-expanded has-icons-left">
+                            <div class="select is-fullwidth">
+                              <select name="country" [(ngModel)]="filterEvent" [disabled]="!runtimeEvents">
+                                <option [ngValue]="null">{{ 'Event-list.All events' | translate }}</option>
+                                <ng-container *ngIf="runtimeEvents">
+                                <option *ngFor="let event of runtimeEvents.data" [ngValue]="event.attributes.event_id">{{ event.attributes.name }}</option>
+                                </ng-container>
+                              </select>
+                            </div>
+                            <span class="icon is-small is-left">
+                              <i class="fas fa-file-alt"></i>
+                            </span>
+                          </div>
+                          <div class="control">
+                            <button type="submit" class="button" (click)="applyFilters()">{{ 'Event-list.Filter' | translate }}</button>
+                          </div>
+                        </div>
+                      </div>
+                      <a [routerLink]="" fragment="list"  aria-label="more options">
+                        <span class="icon">
+                          <i class="fa fa-calendar-check fa-2x" aria-hidden="true"></i>
+                        </span>
+                      </a>
+                    </div>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="!events || events.is_loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="events && events.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'Event-list.Event ID' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'Event-list.Block' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'Event-list.Referenced Transaction' | translate }}</th>
+                                <th>{{ 'Event-list.Module' | translate }}</th>
+                                <th>{{ 'Event-list.Event' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let event of events.data; trackBy: events.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-calendar-check"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/event/{{ event.id }}">{{ event.id }}</a></td>
+                                    <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/block/{{ event.attributes.block_id }}">{{ event.attributes.block_id }}</a></td>
+                                    <td class="is-hidden-mobile"><a *ngIf="event.attributes.extrinsic_idx" routerLink="{{ networkURLPrefix }}/transaction/{{ event.attributes.block_id }}-{{event.attributes.extrinsic_idx}}">{{ event.attributes.block_id }}-{{event.attributes.extrinsic_idx}}</a></td>
+                                    <td>{{ event.attributes.module_id }}</td>
+                                    <td>{{ event.attributes.event_id }}</td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/event/{{ event.id }}">{{ 'Event-list.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="no-items" *ngIf="events && events.data.length == 0 && !events.is_loading">{{ 'Event-list.No items' | translate }}</div>
+                    </div>
+                </div>
+                 <footer class="card-footer" *ngIf="events && events.data.length == 25">
+                    <a routerLink="." [queryParams]="{ page: currentPage + 1}" queryParamsHandling="merge" class="card-footer-item">{{ 'Event-list.View next' | translate }}</a>
+                </footer>
+            </div>
+        </section>
+    </div>
+</div>

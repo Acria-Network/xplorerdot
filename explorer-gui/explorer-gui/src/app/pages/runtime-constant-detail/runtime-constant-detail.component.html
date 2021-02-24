@@ -1,0 +1,57 @@
+<div class="columns">
+  <div class="column is-12">
+      <app-polkascan-header></app-polkascan-header>
+
+      <div *ngIf="runtimeConstant$ | async as runtimeConstant">
+        <section>
+          <div class="card">
+              <header class="card-header">
+                  <p class="card-header-title">
+                      {{ 'runtime-constant-detail.Constant' | translate }} "{{ runtimeConstant.attributes.name }}"
+                  </p>
+                  <a  class="card-header-icon" aria-label="more options">
+                 <span class="icon"><i class="fa fa-memory fa-2x"></i></span>
+                </a>
+              </header>
+              <div class="card-table" *ngIf="runtimeConstant">
+                  <div class="content">
+                      <table class="table is-fullwidth is-striped">
+                          <tbody>
+                              <tr>
+                                  <td width="20%">{{ 'runtime-constant-detail.Name' | translate }}</td>
+                                  <td >{{runtimeConstant.attributes.name}}</td>
+                              </tr>
+                              <tr>
+                                  <td>{{ 'runtime-constant-detail.Module' | translate }}</td>
+                                  <td >{{runtimeConstant.attributes.module_id}}</td>
+                              </tr>
+                              <tr>
+                                  <td>{{ 'runtime-constant-detail.Spec version' | translate }}</td>
+                                  <td >{{runtimeConstant.attributes.spec_version}}</td>
+                              </tr>
+                              <tr>
+                                  <td>{{ 'runtime-constant-detail.Type' | translate }}</td>
+                                  <td >{{runtimeConstant.attributes.type}}</td>
+                              </tr>
+                              <tr>
+                                  <td>{{ 'runtime-constant-detail.Value' | translate }}</td>
+                                  <td [ngSwitch]="runtimeConstant.attributes.type">
+                                  <div *ngSwitchCase="'Address'"><a routerLink="{{ networkURLPrefix }}/account/{{ runtimeConstant.attributes.value }}" class="address-mobile-format"><app-identicon [accountId]="runtimeConstant.attributes.value"></app-identicon>{{ runtimeConstant.attributes.value }}</a></div>
+                                  <div *ngSwitchCase="'Balance'">{{ formatBalance(runtimeConstant.attributes.value) | number:'1.0-15'}} {{ networkTokenSymbol }}</div>
+                                  <div *ngSwitchCase="'Moment'">{{ runtimeConstant.attributes.value | date:'medium' }}</div>
+                                  <div *ngSwitchDefault><pre>{{ runtimeConstant.attributes.value | json }}</pre></div>
+                                </td>
+                              </tr>
+                              <tr>
+                                  <td>{{ 'runtime-constant-detail.Documentation' | translate }}</td>
+                                  <td>{{runtimeConstant.attributes.documentation }}</td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+        </section>
+      </div>
+  </div>
+</div>

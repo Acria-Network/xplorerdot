@@ -1,0 +1,23 @@
+<table class="table is-striped" *ngIf="proposal">
+  <tbody>
+    <tr>
+      <td>Module</td>
+      <td>{{ proposal.call_module }}</td>
+    </tr>
+    <tr>
+      <td>Call</td>
+      <td>{{ proposal.call_function }}</td>
+    </tr>
+    <tr>
+      <td>Parameters</td>
+      <td>
+        <app-struct
+          [struct]="proposal.call_args"
+          [networkTokenDecimals]="networkTokenDecimals"
+          [networkTokenSymbol]="networkTokenSymbol"
+          [networkURLPrefix]="networkURLPrefix"
+        ></app-struct>
+      </td>
+    </tr>
+  </tbody>
+</table>

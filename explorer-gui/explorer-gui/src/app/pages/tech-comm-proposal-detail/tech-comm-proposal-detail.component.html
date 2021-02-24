@@ -1,0 +1,170 @@
+<div class="column is-12">
+    <app-polkascan-header></app-polkascan-header>
+    <div *ngIf="proposal$ | async as proposal">
+        <section class="info-tiles">
+          <div class="card events-card">
+              <header class="card-header">
+                  <p class="card-header-title">
+                      {{ 'Tech-comm-proposal-detail.Technical Committee Proposal' | translate }} #{{ proposal.attributes.proposal_id }}
+                  </p>
+                  <a  class="card-header-icon" aria-label="more options">
+                 <span class="icon"><i class="fa fa-microchip fa-2x"></i></span>
+                </a>
+              </header>
+              <div class="card-table" *ngIf="proposal">
+                  <div class="content">
+                      <table class="table is-fullwidth is-striped">
+                          <tbody>
+                              <tr>
+                                <td width="20%">{{ 'Tech-comm-proposal-detail.Created at block' | translate }}</td>
+                                <td><a routerLink="{{ networkURLPrefix }}/block/{{ proposal.attributes.created_at_block }}">{{ proposal.attributes.created_at_block }}</a></td>
+                              </tr>
+                              <tr>
+                                <td width="20%">{{ 'Tech-comm-proposal-detail.Updated at block' | translate }}</td>
+                                <td><a routerLink="{{ networkURLPrefix }}/block/{{ proposal.attributes.updated_at_block }}">{{ proposal.attributes.updated_at_block }}</a></td>
+                              </tr>
+                              <tr>
+                                <td width="20%">{{ 'Tech-comm-proposal-detail.Motion Hash' | translate }}</td>
+                                <td>
+                                  0x{{ proposal.attributes.motion_hash }}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>{{ 'Tech-comm-proposal-detail.Proposer' | translate }}</td>
+                                <td><a routerLink="{{ networkURLPrefix }}/account/{{ proposal.attributes.account?.attributes.address }}"><app-address [account]="proposal.attributes.account"></app-address></a></td>
+                              </tr>
+                              <tr>
+                                <td width="20%">{{ 'Tech-comm-proposal-detail.Member Threshold' | translate }}</td>
+                                <td>
+                                  {{ proposal.attributes.member_threshold }}
+                                </td>
+                              </tr>
+                               <tr>
+                                <td width="20%">{{ 'Tech-comm-proposal-detail.Aye votes' | translate }}</td>
+                                <td>
+                                  {{ proposal.attributes.yes_votes_count }}
+                                </td>
+                              </tr>
+                               <tr>
+                                <td width="20%">{{ 'Tech-comm-proposal-detail.Nay votes' | translate }}</td>
+                                <td>
+                                  {{ proposal.attributes.no_votes_count }}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td width="20%">{{ 'Tech-comm-proposal-detail.Status' | translate }}</td>
+                                <td>
+                                  {{ proposal.attributes.status }}
+                                </td>
+                              </tr>
+                              <tr *ngIf="proposal.attributes.status == 'Executed'">
+                                <td width="15%">{{ 'Tech-comm-proposal-detail.Execution result' | translate }}</td>
+                                <td>
+                                  <i *ngIf="proposal.attributes.executed === true" class="fa fa-check" style="color: forestgreen"></i>
+                                  <i *ngIf="proposal.attributes.executed === false" class="fa fa-times" style="color: darkred"></i>
+                                </td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+        </section>
+        <section class="info-tiles" *ngIf="proposal">
+          <div class="card ">
+            <div class="tabs">
+              <ul>
+                <li [ngClass]="{'is-active': currentTab == 'proposal'}">
+                  <a routerLink="." fragment="proposal">
+                    <span class="icon is-small"><i class="fas fa-poll" aria-hidden="true"></i></span>
+                    <span>{{ 'Tech-comm-proposal-detail.Proposal' | translate }}</span>
+                  </a>
+                </li>
+                <li [ngClass]="{'is-active': currentTab == 'votes'}">
+                  <a routerLink="." fragment="votes">
+                    <span class="icon is-small"><i class="fas fa-vote-yea" aria-hidden="true"></i></span>
+                    <span>{{ 'Tech-comm-proposal-detail.Votes' | translate }}</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="card-table" id="proposal" *ngIf="currentTab == 'proposal'">
+                <div class="content">
+                  <table class="table is-striped" *ngIf="proposal.attributes.proposal">
+                  <tbody>
+                    <tr *ngIf="proposal.attributes.proposal.call_documentation">
+                      <td>{{ 'Proposal.Description' | translate}}</td>
+                      <td>{{ proposal.attributes.proposal.call_documentation }}</td>
+                    </tr>
+                    <tr>
+                      <td>{{ 'Proposal.Module' | translate }}</td>
+                      <td>{{ proposal.attributes.proposal.call_module }}</td>
+                    </tr>
+                    <tr>
+                      <td>{{ 'Proposal.Call' | translate }}</td>
+                      <td>{{ proposal.attributes.proposal.call_function }}</td>
+                    </tr>
+                    <tr>
+                      <td>{{ 'Proposal.Parameters' | translate }}</td>
+                      <td [ngSwitch]="true">
+                        <ng-container *ngSwitchCase="proposal.attributes.proposal.call_module == 'Treasury' && (proposal.attributes.proposal.call_function == 'reject_proposal' ||proposal.attributes.proposal.call_function == 'approve_proposal') ">
+                         <a routerLink="{{ networkURLPrefix }}/treasury/proposal/{{ proposal.attributes.proposal.call_args[0].value }}">Treasury proposal #{{ proposal.attributes.proposal.call_args[0].value }}</a>
+                        </ng-container>
+                        <ng-container *ngSwitchCase="proposal.attributes.proposal.call_args[0].name == 'proposal_hash'">
+                         <a routerLink="{{ networkURLPrefix }}/democracy/preimage/{{ proposal.attributes.proposal.call_args[0].value }}">Proposal preimage: {{ proposal.attributes.proposal.call_args[0].value }}</a>
+                        </ng-container>
+                        <app-struct *ngSwitchDefault
+                          [struct]="proposal.attributes.proposal.call_args"
+                          [networkTokenDecimals]="networkTokenDecimals"
+                          [networkTokenSymbol]="networkTokenSymbol"
+                          [networkURLPrefix]="networkURLPrefix"
+                        ></app-struct>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                  <table class="table is-striped" *ngIf="proposal.attributes.proposal?.proposalHash">
+                  <tbody>
+                    <tr>
+                      <td>{{ 'Tech-comm-proposal-detail.Proposal Hash' | translate }}</td>
+                      <td>{{ proposal.attributes.proposal?.proposalHash }}</td>
+                    </tr>
+                  </tbody>
+                  </table>
+                </div>
+            </div>
+
+            <div class="card-table" id="votes" *ngIf="currentTab == 'votes'">
+                <div class="content">
+                    <table class="table is-fullwidth is-striped">
+                         <thead>
+                          <tr>
+                            <th></th>
+                            <th>{{ 'Tech-comm-proposal-detail.Account' | translate }}</th>
+                            <th>{{ 'Tech-comm-proposal-detail.Vote' | translate }}</th>
+                            <th class="is-hidden-mobile">{{ 'Tech-comm-proposal-detail.Block' | translate }}</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let vote of proposal.relationships.votes.data; trackBy: proposal.relationships.votes.trackBy">
+                                <td width="5%">
+                                  <i class="fa fa-vote-yea"></i>
+                                </td>
+                                <td><a routerLink="{{ networkURLPrefix }}/account/{{ vote.attributes.account.attributes.address }}" *ngIf="vote.attributes.account"><app-address [account]="vote.attributes.account"></app-address></a></td>
+                                <td>
+                                  <i *ngIf="vote.attributes.vote" class="fa fa-check" style="color: forestgreen"></i>
+                                  <i *ngIf="!vote.attributes.vote" class="fa fa-times" style="color: darkred"></i>
+                                </td>
+                                <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/block/{{ vote.attributes.updated_at_block }}">{{ vote.attributes.updated_at_block }}</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+          </div>
+        </section>
+    </div>
+</div>

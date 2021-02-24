@@ -1,0 +1,94 @@
+<div class="columns">
+    <div class="column is-12">
+        <app-polkascan-header></app-polkascan-header>
+        <section>
+            <div class="card ">
+                <header class="card-header">
+                    <div class="card-header-title">
+                        <p>{{ 'Inherent-list.Inherents' | translate }}</p>
+
+                    </div>
+
+                    <div class="card-header-icon">
+                      <div class="filters" *ngIf="runtimeModules">
+                        <div class="field has-addons">
+                          <div class="control is-expanded has-icons-left">
+                            <div class="select is-fullwidth">
+                              <select name="country" [(ngModel)]="filterModule" (ngModelChange)="selectModule($event)">
+                                <option [ngValue]="null">{{ 'Inherent-list.All modules' | translate }}</option>
+                                <option *ngFor="let module of runtimeModules.data" [ngValue]="module?.attributes.module_id">{{module.attributes.name}}</option>
+                              </select>
+                            </div>
+                            <span class="icon is-small is-left">
+                              <i class="fas fa-cog"></i>
+                            </span>
+                          </div>
+                          <div class="control is-expanded has-icons-left">
+                            <div class="select is-fullwidth">
+                              <select name="country" [(ngModel)]="filterCall" [disabled]="!runtimeCalls">
+                                <option [ngValue]="null">{{ 'Inherent-list.All calls' | translate }}</option>
+                                <ng-container *ngIf="runtimeCalls">
+                                <option *ngFor="let call of runtimeCalls.data" [ngValue]="call.attributes.call_id">{{call.attributes.name}}</option>
+                                </ng-container>
+                              </select>
+                            </div>
+                            <span class="icon is-small is-left">
+                              <i class="fas fa-file-alt"></i>
+                            </span>
+                          </div>
+                          <div class="control">
+                            <button type="submit" class="button" (click)="applyFilters()">{{ 'Inherent-list.Filter' | translate }}</button>
+                          </div>
+                        </div>
+                      </div>
+                      <a [routerLink]="" fragment="list"  aria-label="more options">
+                        <span class="icon">
+                          <i class="fa fa-file-alt fa-2x" aria-hidden="true"></i>
+                        </span>
+                      </a>
+                    </div>
+
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="!extrinsics || extrinsics.is_loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="extrinsics && extrinsics.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'Inherent-list.Inherent ID' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'Inherent-list.Block' | translate }}</th>
+                                <th>{{ 'Inherent-list.Module' | translate }}</th>
+                                <th>{{ 'Inherent-list.Call' | translate }}</th>
+                                <th>{{ 'Inherent-list.Success' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let extrinsic of extrinsics.data; trackBy: extrinsics.trackBy">
+                                    <td width="5%">
+                                      <i *ngIf="extrinsic.attributes.signed" class="fa fa-file-signature"></i>
+                                      <i *ngIf="extrinsic.attributes.unsigned" class="fa fa-file-alt"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/inherent/{{ extrinsic.attributes.extrinsic_hash ? '0x' + extrinsic.attributes.extrinsic_hash : extrinsic.id }}">{{ extrinsic.id }}</a></td>
+                                    <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/block/{{ extrinsic.attributes.block_id }}">{{ extrinsic.attributes.block_id }}</a></td>
+                                    <td>{{ extrinsic.attributes.module_id }}</td>
+                                    <td>{{ extrinsic.attributes.call_id }}</td>
+                                    <td>
+                                      <i *ngIf="extrinsic.attributes.success" class="fa fa-check" style="color: forestgreen"></i>
+                                      <i *ngIf="extrinsic.attributes.error" class="fa fa-times" style="color: darkred"></i>
+                                    </td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/inherent/{{ extrinsic.attributes.extrinsic_hash ? '0x' + extrinsic.attributes.extrinsic_hash : extrinsic.id }}">{{ 'Inherent-list.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="no-items" *ngIf="extrinsics && extrinsics.data.length == 0 && !extrinsics.is_loading">{{ 'Inherent-list.No items' | translate }}</div>
+                    </div>
+                </div>
+                <footer class="card-footer" *ngIf="extrinsics && extrinsics.data.length == 25">
+                    <a routerLink="." [queryParams]="{ page: currentPage + 1}" queryParamsHandling="merge" class="card-footer-item">{{ 'Global.View next' | translate }}</a>
+                </footer>
+            </div>
+        </section>
+    </div>
+</div>

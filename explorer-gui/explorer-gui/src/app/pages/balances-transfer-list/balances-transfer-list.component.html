@@ -1,0 +1,50 @@
+<div class="columns">
+    <div class="column is-12">
+        <app-polkascan-header></app-polkascan-header>
+        <section>
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'BalanceTransferList.Balance transfers' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="list" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-exchange-alt fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="!balanceTransfers || balanceTransfers.is_loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="balanceTransfers && balanceTransfers.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th class="is-hidden-mobile">{{ 'BalanceTransferList.Block' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'BalanceTransferList.Sender' | translate }}</th>
+                                <th>{{ 'BalanceTransferList.Destination' | translate }}</th>
+                                <th>{{ 'BalanceTransferList.Value' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let balanceTransfer of balanceTransfers.data; trackBy: balanceTransfers.trackBy">
+                                  <td width="5%"><i class="fa fa-exchange-alt"></i></td>
+                                  <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/block/{{ balanceTransfer.attributes.block_id }}">{{ balanceTransfer.attributes.block_id }}</a></td>
+                                  <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/account/{{ balanceTransfer.attributes.sender.attributes.address }}" class="address-format"><app-address [account]="balanceTransfer.attributes.sender"></app-address></a></td>
+                                  <td><a routerLink="{{ networkURLPrefix }}/account/{{ balanceTransfer.attributes.destination.attributes.address }}" class="address-format"><app-address [account]="balanceTransfer.attributes.destination"></app-address></a></td>
+                                  <td>{{ formatBalance(balanceTransfer.attributes.value) | number:'1.0-15'}} {{ networkTokenSymbol }}</td>
+                                  <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/balances/transfer/{{ balanceTransfer.id }}">{{ 'BalanceTransferList.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="no-items" *ngIf="balanceTransfers && balanceTransfers.data.length == 0 && !balanceTransfers.is_loading">{{ 'BalanceTransferList.No items' | translate }}</div>
+                    </div>
+                </div>
+                <footer class="card-footer" *ngIf="balanceTransfers && balanceTransfers.data.length == 25">
+                    <a routerLink="." [queryParams]="{ page: currentPage + 1}" class="card-footer-item">{{ 'BalanceTransferList.View next' | translate }}</a>
+                </footer>
+            </div>
+        </section>
+    </div>
+</div>

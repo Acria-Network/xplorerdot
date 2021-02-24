@@ -1,0 +1,68 @@
+
+      <div *ngIf="event" class="card events-card">
+        <header class="card-header">
+            <div class="card-header-title">
+               {{ 'event-table.Event' | translate }} #{{ event.id }}
+            </div>
+            <a  class="card-header-icon" aria-label="more options">
+            <span class="icon">
+              <i class="fa fa-calendar-check fa-2x"></i>
+            </span>
+          </a>
+        </header>
+        <div class="card-table">
+            <div class="content">
+                <table class="table is-fullwidth is-striped">
+                    <tbody>
+                        <tr *ngIf="context != 'block'">
+                          <td width="15%">{{ 'event-table.Block' | translate }}</td>
+                          <td><a routerLink="{{ networkURLPrefix }}/block/{{ event.attributes.block_id }}">{{ event.attributes.block_id }}</a></td>
+                        </tr>
+                        <tr *ngIf="event.attributes.extrinsic_idx">
+                          <td width="15%">{{ 'event-table.Extrinsic' | translate }}</td>
+                          <td><a routerLink="{{ networkURLPrefix }}/transaction/{{ event.attributes.block_id }}-{{event.attributes.extrinsic_idx}}">{{ event.attributes.block_id }}-{{event.attributes.extrinsic_idx}}</a></td>
+                        </tr>
+                        <tr>
+                          <td width="15%">{{ 'event-table.Event Index' | translate }}</td>
+                          <td>{{ event.attributes.event_idx }}</td>
+                        </tr>
+                        <tr>
+                          <td width="15%">{{ 'event-table.Module' | translate }}</td>
+                          <td>{{ event.attributes.module_id }}</td>
+                        </tr>
+                        <tr>
+                          <td width="15%">{{ 'event-table.Event name' | translate }}</td>
+                          <td>{{ event.attributes.event_id }}</td>
+                        </tr>
+                        <tr>
+                          <td width="15%">{{ 'event-table.Description' | translate }}</td>
+                          <td>{{ event.attributes.documentation }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-table" *ngIf="event.attributes.attributes">
+            <div class="content">
+                <table class="table is-fullwidth is-striped">
+                    <thead>
+                      <tr>
+                        <th colspan="2" style="color: #8F99A3; font-weight: 400; font-size: 16px">{{ 'event-table.Attributes' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let attribute of event.attributes.attributes">
+                          <td>
+                            <app-render-type
+                              [item]="attribute"
+                              [networkTokenDecimals]="networkTokenDecimals"
+                              [networkTokenSymbol]="networkTokenSymbol"
+                              [networkURLPrefix]="networkURLPrefix"
+                            ></app-render-type>
+                          </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>

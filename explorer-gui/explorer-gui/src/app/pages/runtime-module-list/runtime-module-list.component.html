@@ -1,0 +1,58 @@
+<div class="columns">
+  <div class="column is-12">
+      <app-polkascan-header></app-polkascan-header>
+
+      <div>
+        <section>
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'runtime-module-list.Runtime Modules' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="list" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-cog fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="!modules || modules.is_loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="modules && modules.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'runtime-module-list.Name' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-module-list.Call Functions' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-module-list.Events' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-module-list.Storage Functions' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-module-list.Constants' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-module-list.Error Types' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let module of modules.data; trackBy: modules.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-cog"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/runtime-module/{{ module.id }}">{{ module.attributes.name }}</a></td>
+                                    <td class="is-hidden-mobile">{{ module.attributes.count_call_functions }}</td>
+                                    <td class="is-hidden-mobile">{{ module.attributes.count_events }}</td>
+                                    <td class="is-hidden-mobile">{{ module.attributes.count_storage_functions }}</td>
+                                    <td class="is-hidden-mobile">{{ module.attributes.count_constants }}</td>
+                                    <td class="is-hidden-mobile">{{ module.attributes.count_errors }}</td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/runtime-module/{{ module.id }}">{{ 'runtime-module-list.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <footer class="card-footer" *ngIf="modules?.data.length == 25">
+                    <a routerLink="." [queryParams]="{ page: currentPage + 1}" class="card-footer-item">{{ 'runtime-module-list.View next' | translate }}</a>
+                </footer>
+            </div>
+        </section>
+      </div>
+  </div>
+</div>

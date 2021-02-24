@@ -1,0 +1,128 @@
+<div class="columns">
+  <div class="column is-12">
+      <app-polkascan-header></app-polkascan-header>
+
+      <div *ngIf="runtime$ | async as runtime">
+        <section class="info-tiles">
+          <div class="card events-card">
+              <header class="card-header">
+                  <p class="card-header-title">
+                      {{ 'runtime-detail.Runtime' | translate }} #{{ runtime.attributes.id }}
+                  </p>
+                  <a  class="card-header-icon" aria-label="more options">
+                 <span class="icon"><i class="fa fa-cogs fa-2x"></i></span>
+                </a>
+              </header>
+              <div class="card-table" *ngIf="runtime">
+                  <div class="content">
+                      <table class="table is-fullwidth is-striped">
+                          <tbody>
+                              <tr>
+                                  <td width="20%">{{ 'runtime-detail.Name' | translate }}</td>
+                                  <td >{{runtime.attributes.impl_name}}</td>
+                              </tr>
+                              <tr>
+                                  <td>{{ 'runtime-detail.Spec version' | translate }}</td>
+                                  <td >{{runtime.attributes.spec_version}}</td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+        </section>
+        <section id="modules">
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'runtime-detail.Modules' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="modules" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-cog fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="runtime.relationships.modules.data.length === 0"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="runtime.relationships.modules.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'runtime-detail.Name' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-detail.Call Functions' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-detail.Events' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-detail.Storage Functions' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let module of runtime.relationships.modules.data; trackBy: runtime.relationships.modules.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-cog"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/runtime-module/{{ module.id }}">{{ module.attributes.name }}</a></td>
+                                    <td class="is-hidden-mobile">{{ module.attributes.count_call_functions }}</td>
+                                    <td class="is-hidden-mobile">{{ module.attributes.count_events }}</td>
+                                    <td class="is-hidden-mobile">{{ module.attributes.count_storage_functions }}</td>
+
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/runtime-module/{{ module.id }}">Details</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="types">
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'runtime-detail.Types' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="types" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-stream fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="runtime.relationships.types.data.length === 0"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="runtime.relationships.types.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'runtime-type-list.Type string' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-type-list.Runtime primitive' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-type-list.RUST primitive' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-type-list.Compatible with Polkascan' | translate }}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let type of runtime.relationships.types.data; trackBy: runtime.relationships.types.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-stream"></i>
+                                    </td>
+                                    <td>{{ type.attributes.type_string }}</td>
+                                    <td class="is-hidden-mobile">
+                                        <i *ngIf="type.attributes.is_primitive_runtime" class="fa fa-check" style="color: forestgreen"></i>
+                                      </td>
+                                    <td class="is-hidden-mobile">
+                                        <i *ngIf="type.attributes.is_primitive_core" class="fa fa-check" style="color: forestgreen"></i>
+                                    </td>
+                                    <td class="is-hidden-mobile">
+                                      <i *ngIf="type.attributes.decoder_class" class="fa fa-check" style="color: forestgreen"></i>
+                                      <i *ngIf="!type.attributes.decoder_class" class="fa fa-times" style="color: darkred"></i>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+      </div>
+  </div>
+</div>

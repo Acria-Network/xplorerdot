@@ -1,0 +1,42 @@
+.navbar-burger .icon {
+  background-color: #000;
+  position: absolute;
+  left: calc(50% - 5px);
+  top: 15px;
+}
+
+.network-name {
+  position: absolute;
+  right: 50px;
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 7px 0;
+}
+
+#privacy-notice {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+#navMenu-networks .navbar-dropdown {
+  z-index: 40;
+}
+
+.network-icon {
+  padding-right: 10px;
+  width: 28px;
+}
+
+.network-icon.current-network {
+  padding-top: 2px;
+}
+
+.language-icon {
+  padding-right: 10px;
+  padding-top: 2px;
+}

@@ -1,0 +1,31 @@
+<div class="columns">
+  <div class="column is-12">
+      <app-polkascan-header></app-polkascan-header>
+       <section class="info-tiles">
+         <div *ngIf="notFound" class="card events-card">
+          <header class="card-header">
+              <div class="card-header-title">
+                 Extrinsic not found
+              </div>
+              <a  class="card-header-icon" aria-label="more options">
+              <span class="icon">
+                <i class="fa fa-file-alt fa-2x"></i>
+              </span>
+            </a>
+          </header>
+           <div class="card-table">
+              <div class="content">
+                Refresh
+              </div>
+           </div>
+         </div>
+
+        <app-extrinsic-table
+          [extrinsic]="extrinsic$ | async"
+          [networkURLPrefix]="networkURLPrefix"
+          [networkTokenDecimals]="networkTokenDecimals"
+          [networkTokenSymbol]="networkTokenSymbol"
+        ></app-extrinsic-table>
+       </section>
+  </div>
+</div>

@@ -1,0 +1,78 @@
+          <div class="card events-card" *ngIf="preimage">
+              <header class="card-header">
+                  <p class="card-header-title">
+                      {{ 'Democracy-preimage-detail.Proposal Preimage' | translate }} 0x{{ preimage.attributes.hash }}
+                  </p>
+                  <a  class="card-header-icon" aria-label="more options">
+                 <span class="icon"><i class="fa fa-file-code fa-2x"></i></span>
+                </a>
+              </header>
+              <div class="card-table">
+                  <div class="content">
+                      <table class="table is-fullwidth is-striped">
+                          <tbody>
+                              <tr>
+                                <td width="20%">{{ 'Democracy-preimage-detail.Created at block' | translate }}</td>
+                                <td><a routerLink="{{ networkURLPrefix }}/block/{{ preimage.attributes.created_at_block }}">{{ preimage.attributes.created_at_block }}</a></td>
+                              </tr>
+                              <tr>
+                                <td width="20%">{{ 'Democracy-preimage-detail.Updated at block' | translate }}</td>
+                                <td><a routerLink="{{ networkURLPrefix }}/block/{{ preimage.attributes.updated_at_block }}">{{ preimage.attributes.updated_at_block }}</a></td>
+                              </tr>
+                              <tr>
+                                <td>{{ 'Democracy-preimage-detail.Author' | translate }}</td>
+                                <td><a routerLink="{{ networkURLPrefix }}/account/{{ preimage.attributes.account?.attributes.address }}" class="address-mobile-format"><app-address [account]="preimage.attributes.account"></app-address></a></td>
+                              </tr>
+                              <tr>
+                                <td width="20%">{{ 'Democracy-preimage-detail.Module' | translate }}</td>
+                                <td>
+                                  {{ preimage.attributes.proposal?.call_module }}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td width="20%">{{ 'Democracy-preimage-detail.Call' | translate }}</td>
+                                <td>
+                                  {{ preimage.attributes.proposal?.call_function }}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td width="20%">{{ 'Democracy-preimage-detail.Parameters' | translate }}</td>
+                                <td>
+                                  <app-struct *ngIf="preimage.attributes.proposal?.call_function != 'set_code'"
+                                    [struct]="preimage.attributes.proposal?.call_args"
+                                    [networkTokenDecimals]="networkTokenDecimals"
+                                    [networkTokenSymbol]="networkTokenSymbol"
+                                    [networkURLPrefix]="networkURLPrefix"
+                                  ></app-struct>
+                                  <a *ngIf="preimage.attributes.proposal?.call_function == 'set_code'" [href]="download(preimage.attributes.proposal?.call_args[0].name)">Download WASM binary</a>
+                                </td>
+                              </tr>
+                              <tr *ngIf="preimage.attributes.verified">
+                                <td width="20%">{{ 'Democracy-preimage-detail.Verified by Polkascan' | translate }}</td>
+                                <td>
+                                   <i class="fa fa-check" style="color: forestgreen"></i>
+                                </td>
+                              </tr>
+                              <tr *ngIf="preimage.attributes.verified_url">
+                                <td width="20%">{{ 'Democracy-preimage-detail.Verified URL' | translate }}</td>
+                                <td>
+                                   <a href="{{ preimage.attributes.verified_url }}">{{preimage.attributes.verified_url}}</a>
+                                </td>
+                              </tr>
+                              <tr>
+                                <td width="20%">{{ 'Democracy-preimage-detail.Deposit' | translate }}</td>
+                                <td>
+                                  {{ formatBalance(preimage.attributes.deposit) | number:'1.0-15'}} {{ networkTokenSymbol }}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td width="20%">{{ 'Democracy-preimage-detail.Status' | translate }}</td>
+                                <td>
+                                  {{ preimage.attributes.status }}
+                                </td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>

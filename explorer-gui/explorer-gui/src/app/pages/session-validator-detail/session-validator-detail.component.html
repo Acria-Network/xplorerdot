@@ -1,0 +1,92 @@
+<div class="column is-12">
+    <app-polkascan-header></app-polkascan-header>
+    <div *ngIf="sessionValidator$ | async as validator">
+        <section class="info-tiles" id="details">
+          <div class="card events-card">
+              <header class="card-header">
+                  <p class="card-header-title">
+                      {{ 'session-validator-detail.Validator' | translate }} {{ validator.attributes.validator_stash }} {{ 'session-validator-detail.for session' | translate }} #{{validator.attributes.session_id  }}
+                  </p>
+                  <a [routerLink]="" fragment="details" class="card-header-icon" aria-label="more options">
+                 <span class="icon"><i class="fa fa-user-shield fa-2x"></i></span>
+                </a>
+              </header>
+              <div class="card-table" *ngIf="validator">
+                  <div class="content">
+                      <table class="table is-fullwidth is-striped">
+                          <tbody>
+                            <tr>
+                              <td width="20%">{{ 'session-validator-detail.Stash account' | translate }}</td>
+                              <td><a routerLink="{{ networkURLPrefix }}/account/{{ validator.attributes.validator_stash_account?.attributes.address }}"><app-address [account]="validator.attributes.validator_stash_account"></app-address></a></td>
+                            </tr>
+                            <tr>
+                              <td width="20%">{{ 'session-validator-detail.Controller account' | translate }}</td>
+                              <td><a routerLink="{{ networkURLPrefix }}/account/{{ validator.attributes.validator_controller_account?.attributes.address }}"><app-address [account]="validator.attributes.validator_controller_account"></app-address></a></td>
+                            </tr>
+                            <tr>
+                              <td width="20%">{{ 'session-validator-detail.Bonded Total' | translate }}</td>
+                              <td>{{ formatBalance(validator.attributes.bonded_total) | number:'1.0-15'}} {{ networkTokenSymbol }}</td>
+                            </tr>
+                            <tr>
+                              <td width="20%">{{ 'session-validator-detail.Bonded own stash' | translate }}</td>
+                              <td>{{ formatBalance(validator.attributes.bonded_own) | number:'1.0-15'}} {{ networkTokenSymbol }}</td>
+                            </tr>
+                            <tr>
+                              <td width="20%">{{ 'session-validator-detail.Additional bonded by nominators' | translate }}</td>
+                              <td>{{ formatBalance(validator.attributes.bonded_nominators) | number:'1.0-15'}} {{ networkTokenSymbol }}</td>
+                            </tr>
+                            <tr>
+                              <td width="20%"># {{ 'session-validator-detail.nominators' | translate }}</td>
+                              <td>{{ validator.attributes.count_nominators }}</td>
+                            </tr>
+                            <tr *ngIf="validator.attributes.commission !== null">
+                              <td width="20%">{{ 'session-validator-detail.Commission' | translate }}</td>
+                              <td>{{ validator.attributes.commission / 10000000 }}%</td>
+                            </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+        </section>
+        <section id="nominators">
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'session-validator-detail.Nominators' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="nominators" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-user-check fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="validator.relationships.nominators.loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="validator.relationships.nominators.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'session-validator-detail.Address' | translate }}</th>
+                                <th>{{ 'session-validator-detail.Bonded' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let nominator of validator.relationships.nominators.data; trackBy: validator.relationships.nominators.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-user-check"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/account/{{ nominator.attributes.nominator_stash_account?.attributes.address }}"><app-address [account]="nominator.attributes.nominator_stash_account"></app-address></a>
+                                    <td>{{ formatBalance(nominator.attributes.bonded) | number:'1.0-15'}} {{ networkTokenSymbol }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="no-items" *ngIf="validator.relationships.nominators.data.length == 0">{{ 'session-validator-detail.No nominators for this validator' | translate }}</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

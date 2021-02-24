@@ -1,0 +1,168 @@
+<div class="column is-12">
+    <app-polkascan-header></app-polkascan-header>
+    <div *ngIf="referendum$ | async as referendum">
+        <section class="info-tiles">
+          <div class="card events-card">
+              <header class="card-header">
+                  <p class="card-header-title">
+                      {{ 'Democracy-referendum-detail.Democracy referendum' | translate }} #{{ referendum.attributes.id }}
+                  </p>
+                  <a  class="card-header-icon" aria-label="more options">
+                 <span class="icon"><i class="fa fa-person-booth fa-2x"></i></span>
+                </a>
+              </header>
+              <div class="card-table" *ngIf="referendum">
+                  <div class="content">
+                      <table class="table is-fullwidth is-striped">
+                          <tbody>
+                              <tr>
+                                <td width="20%">{{ 'Democracy-referendum-detail.Created at block' | translate }}</td>
+                                <td><a routerLink="{{ networkURLPrefix }}/block/{{ referendum.attributes.created_at_block }}">{{ referendum.attributes.created_at_block }}</a></td>
+                              </tr>
+                              <tr>
+                                <td width="20%">{{ 'Democracy-referendum-detail.Updated at block' | translate }}</td>
+                                <td><a routerLink="{{ networkURLPrefix }}/block/{{ referendum.attributes.updated_at_block }}">{{ referendum.attributes.updated_at_block }}</a></td>
+                              </tr>
+                              <ng-container *ngIf="referendum.attributes.proposal">
+                                <ng-container *ngIf="!referendum.attributes.proposal?.Ongoing">
+                                  <tr>
+                                    <td>{{ 'Democracy-referendum-detail.Delay' | translate }}</td>
+                                    <td>{{ referendum.attributes.proposal.delay }}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>{{ 'Democracy-referendum-detail.End' | translate }}</td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/block/{{ referendum.attributes.proposal.end }}">{{ referendum.attributes.proposal.end }}</a></td>
+                                  </tr>
+                                </ng-container>
+                                <ng-container *ngIf="referendum.attributes.proposal?.Ongoing">
+                                  <tr>
+                                    <td>{{ 'Democracy-referendum-detail.Delay' | translate }}</td>
+                                    <td>{{ referendum.attributes.proposal.Ongoing.delay }}</td>
+                                  </tr>
+                                  <tr>
+                                    <td>{{ 'Democracy-referendum-detail.End' | translate }}</td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/block/{{ referendum.attributes.proposal.Ongoing.end }}">{{ referendum.attributes.proposal.Ongoing.end }}</a></td>
+                                  </tr>
+                                </ng-container>
+                              </ng-container>
+                              <tr>
+                                <td width="20%">{{ 'Democracy-referendum-detail.Vote Threshold' | translate }}</td>
+                                <td>
+                                  {{ referendum.attributes.vote_threshold }}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td width="20%">{{ 'Democracy-referendum-detail.Status' | translate }}</td>
+                                <td>
+                                  {{ referendum.attributes.status }}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td width="15%">{{ 'Democracy-referendum-detail.Result' | translate }}</td>
+                                <td>
+                                  <i *ngIf="referendum.attributes.success === true" class="fa fa-check" style="color: forestgreen"></i>
+                                  <i *ngIf="referendum.attributes.success === false" class="fa fa-times" style="color: darkred"></i>
+                                </td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+        </section>
+        <section class="info-tiles" *ngIf="referendum?.attributes">
+          <div class="card ">
+            <div class="tabs">
+              <ul>
+                <li [ngClass]="{'is-active': currentTab == 'proposal'}">
+                  <a routerLink="." fragment="proposal">
+                    <span class="icon is-small"><i class="fas fa-poll" aria-hidden="true"></i></span>
+                    <span>{{ 'Democracy-referendum-detail.Proposal' | translate }}</span>
+                  </a>
+                </li>
+                <li [ngClass]="{'is-active': currentTab == 'votes'}">
+                  <a routerLink="." fragment="votes">
+                    <span class="icon is-small"><i class="fas fa-vote-yea" aria-hidden="true"></i></span>
+                    <span>{{ 'Democracy-referendum-detail.Votes' | translate }}</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div class="card-table" id="proposal" *ngIf="currentTab == 'proposal' && referendum?.attributes.proposal">
+
+                <div *ngFor="let preimage of referendum.relationships.preimages.data; trackBy: referendum.relationships.preimages.trackBy">
+                  <app-preimage-table
+                    [preimage]="preimage"
+                    [networkURLPrefix]="networkURLPrefix"
+                    [networkTokenDecimals]="networkTokenDecimals"
+                    [networkTokenSymbol]="networkTokenSymbol"
+                  ></app-preimage-table>
+                </div>
+
+                <div class="content" *ngIf="referendum.attributes.proposal?.proposal">
+                  <table class="table is-striped">
+                  <tbody>
+                    <tr *ngIf="referendum.attributes.proposal.proposal.call_documentation">
+                      <td>{{ 'Proposal.Description' | translate}}</td>
+                      <td>{{ referendum.attributes.proposal.proposal.call_documentation }}</td>
+                    </tr>
+                    <tr>
+                      <td>{{ 'Proposal.Module' | translate }}</td>
+                      <td>{{ referendum.attributes.proposal.proposal.call_module }}</td>
+                    </tr>
+                    <tr>
+                      <td>{{ 'Proposal.Call' | translate }}</td>
+                      <td>{{ referendum.attributes.proposal.proposal.call_function }}</td>
+                    </tr>
+                    <tr>
+                      <td>{{ 'Proposal.Parameters' | translate }}</td>
+                      <td>
+                        <app-struct
+                          [struct]="referendum.attributes.proposal.proposal.call_args"
+                          [networkTokenDecimals]="networkTokenDecimals"
+                          [networkTokenSymbol]="networkTokenSymbol"
+                          [networkURLPrefix]="networkURLPrefix"
+                        ></app-struct>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+            </div>
+
+            <div class="card-table" id="votes" *ngIf="currentTab == 'votes'">
+                <div class="content">
+                    <table class="table is-fullwidth is-striped">
+                         <thead>
+                          <tr>
+                            <th></th>
+                            <th>{{ 'Democracy-referendum-detail.Account' | translate }}</th>
+                            <th class="is-hidden-mobile">{{ 'Democracy-referendum-detail.Stash' | translate }}</th>
+                            <th>{{ 'Democracy-referendum-detail.Vote' | translate }}</th>
+                            <th class="is-hidden-mobile">{{ 'Democracy-referendum-detail.Block' | translate }}</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let vote of referendum.relationships.votes.data; trackBy: referendum.relationships.votes.trackBy">
+                                <td width="5%">
+                                  <i class="fa fa-vote-yea"></i>
+                                </td>
+                                <td><a routerLink="{{ networkURLPrefix }}/account/{{ vote.attributes.stash_account?.attributes.address }}"><app-address [account]="vote.attributes.stash_account"></app-address></a></td>
+
+                                <td class="is-hidden-mobile">{{ formatBalance(vote.attributes.stash) | number:'1.0-15'}} {{ networkTokenSymbol }}</td>
+                                <td>
+                                  <i *ngIf="vote.attributes.vote_yes" class="fa fa-check" style="color: forestgreen"></i>
+                                  <i *ngIf="vote.attributes.vote_no" class="fa fa-times" style="color: darkred"></i>
+                                </td>
+                                <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/block/{{ vote.attributes.updated_at_block }}">{{ vote.attributes.updated_at_block }}</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+          </div>
+        </section>
+    </div>
+</div>

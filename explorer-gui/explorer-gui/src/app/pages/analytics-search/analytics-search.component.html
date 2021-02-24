@@ -1,0 +1,52 @@
+<div class="columns">
+    <div class="column is-12">
+        <app-polkascan-header></app-polkascan-header>
+        <section class="is-12" id="search">
+            <div class="card">
+                <header class="card-header">
+                    <p class="card-header-title">{{ 'Analytics-Search.Search' | translate }}</p>
+                    <a [routerLink]="" fragment="search" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-search fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-content">
+                    <div class="content">
+                        <form (ngSubmit)="search()">
+                        <div class="control has-icons-left has-icons-right">
+                            <input class="input is-large is-loading" type="text" [(ngModel)]="searchQuery" [ngModelOptions]="{standalone: true}" [placeholder]="'PlaceHolderSearch' | translate">
+                            <span class="icon is-medium is-left">
+                              <i *ngIf="loadingCount === 0" class="fa fa-search"></i>
+                              <i *ngIf="loadingCount > 0" class="fas fa-spinner fa-spin"></i>
+                            </span>
+                            <span class="icon is-medium is-right">
+
+                            </span>
+                        </div>
+                      </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="is-12" id="no-result" *ngIf="currentSearchQuery && loadingCount == 0">
+            <div class="card">
+                <header class="card-header">
+                    <p class="card-header-title">
+                      {{ 'Analytics-Search.No results' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="search" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-search fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-content">
+                    <div class="content">
+                        <div class="no-items">"{{ 'Analytics-Search.No results found for ' | translate }}{{ currentSearchQuery }}"</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

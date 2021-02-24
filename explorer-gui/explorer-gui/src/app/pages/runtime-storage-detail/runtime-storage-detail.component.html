@@ -1,0 +1,75 @@
+<div class="columns">
+  <div class="column is-12">
+      <app-polkascan-header></app-polkascan-header>
+
+      <div *ngIf="runtimeStorage$ | async as runtimeStorage">
+        <section>
+          <div class="card">
+              <header class="card-header">
+                  <p class="card-header-title">
+                      {{ 'runtime-storage-detail.Storage function' | translate }} "{{ runtimeStorage.attributes.name }}"
+                  </p>
+                  <a  class="card-header-icon" aria-label="more options">
+                 <span class="icon"><i class="fa fa-database fa-2x"></i></span>
+                </a>
+              </header>
+              <div class="card-table" *ngIf="runtimeStorage">
+                  <div class="content">
+                      <table class="table is-fullwidth is-striped">
+                          <tbody>
+                              <tr>
+                                  <td width="20%">{{ 'runtime-storage-detail.Name' | translate }}</td>
+                                  <td >{{runtimeStorage.attributes.name}}</td>
+                              </tr>
+                              <tr>
+                                  <td>{{ 'runtime-storage-detail.Module' | translate }}</td>
+                                  <td >{{runtimeStorage.attributes.module_id}}</td>
+                              </tr>
+                              <tr>
+                                  <td>{{ 'runtime-storage-detail.Spec version' | translate }}</td>
+                                  <td >{{runtimeStorage.attributes.spec_version}}</td>
+                              </tr>
+                              <tr>
+                                  <td>{{ 'runtime-storage-detail.Value type' | translate }}</td>
+                                  <td >{{runtimeStorage.attributes.type_value}}</td>
+                              </tr>
+                              <tr>
+                                  <td>{{ 'runtime-storage-detail.Default' | translate }}</td>
+                                  <td >{{runtimeStorage.attributes.default}}</td>
+                              </tr>
+                              <tr>
+                                  <td>{{ 'runtime-storage-detail.Modifier' | translate }}</td>
+                                  <td >{{runtimeStorage.attributes.modifier}}</td>
+                              </tr>
+                              <tr *ngIf="runtimeStorage.attributes.type_key1">
+                                  <td>{{ 'runtime-storage-detail.Key 1 type' | translate }}</td>
+                                  <td >{{runtimeStorage.attributes.type_key1}}</td>
+                              </tr>
+                              <tr *ngIf="runtimeStorage.attributes.type_key1">
+                                  <td>{{ 'runtime-storage-detail.Key 2 type' | translate }}</td>
+                                  <td >{{runtimeStorage.attributes.type_key2}}</td>
+                              </tr>
+                              <tr *ngIf="runtimeStorage.attributes.type_key1">
+                                  <td>{{ 'runtime-storage-detail.Linked' | translate }}</td>
+                                  <td>
+                                    <i *ngIf="runtimeStorage.attributes.type_is_linked" class="fa fa-check" style="color: forestgreen"></i>
+                                    <i *ngIf="!runtimeStorage.attributes.type_is_linked" class="fa fa-times" style="color: darkred"></i>
+                                  </td>
+                              </tr>
+                              <tr *ngIf="runtimeStorage.attributes.type_key2hasher">
+                                  <td>{{ 'runtime-storage-detail.Key 2 hasher' | translate }}</td>
+                                  <td >{{runtimeStorage.attributes.type_key2hasher}}</td>
+                              </tr>
+                              <tr>
+                                  <td>{{ 'runtime-storage-detail.Documentation' | translate }}</td>
+                                  <td>{{runtimeStorage.attributes.documentation }}</td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+        </section>
+      </div>
+  </div>
+</div>

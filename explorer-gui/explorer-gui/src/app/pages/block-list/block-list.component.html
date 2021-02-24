@@ -1,0 +1,52 @@
+<div class="columns">
+    <div class="column is-12">
+        <app-polkascan-header></app-polkascan-header>
+        <section>
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'Block-List.Blocks' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="list" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-cube fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="showLoading && (!blocks || blocks.is_loading)"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="blocks && blocks.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'Block-List.Number' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'Block-List.Age' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'Block-List.Block hash' | translate }}</th>
+                                <th>{{ 'Block-List.Signed Extrinsics' | translate }}</th>
+                                <th>{{ 'Block-List.Module Events' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let block of blocks.data; trackBy: blocks.trackBy">
+                                    <td width="5%"><i class="fa fa-cube"></i></td>
+                                    <td width="10%"><a routerLink="{{ networkURLPrefix }}/block/{{ block.id }}">{{ block.attributes.id }}</a></td>
+                                    <td class="is-hidden-mobile"><span rel="tooltip" title="{{ block.attributes.datetime | date:'medium'}}">{{ block.attributes.datetime | timeago }}</span></td>
+                                    <td class="is-hidden-mobile"><div class="hash-format">{{ block.attributes.hash }}</div></td>
+                                    <td>{{ block.attributes.count_extrinsics_signed }}</td>
+                                    <td>{{ block.attributes.count_events_module }}</td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/block/{{ block.id }}">{{ 'Block-List.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                      <div class="no-items" *ngIf="blocks && blocks.data.length == 0 && !blocks.is_loading">{{ 'Block-List.No items' | translate }}</div>
+                    </div>
+                </div>
+                <footer class="card-footer">
+                    <a routerLink="." [queryParams]="{ page: currentPage + 1}" class="card-footer-item">{{ 'Block-List.View next' | translate }}</a>
+                </footer>
+            </div>
+        </section>
+    </div>
+</div>

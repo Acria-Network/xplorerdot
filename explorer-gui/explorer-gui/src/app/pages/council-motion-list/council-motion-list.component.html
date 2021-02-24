@@ -1,0 +1,65 @@
+<div class="columns">
+    <div class="column is-12">
+        <app-polkascan-header></app-polkascan-header>
+        <section>
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'Council-motion-list.Council Motions' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="list" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-university fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="motions?.is_loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="motions?.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'Council-motion-list.Proposal ID' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'Council-motion-list.Created at Block' | translate }}</th>
+                                <th>{{ 'Council-motion-list.Member Threshold' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'Council-motion-list.Aye votes' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'Council-motion-list.Nay votes' | translate }}</th>
+                                <th>{{ 'Council-motion-list.Status' | translate }}</th>
+                                <th>{{ 'Council-motion-list.Executed' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let motion of motions.data; trackBy: motions.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-university"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/council/motion/{{ motion.attributes.proposal_id }}">{{ motion.attributes.proposal_id }}</a></td>
+                                    <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/block/{{ motion.attributes.created_at_block }}">{{ motion.attributes.created_at_block }}</a></td>
+                                    <td>
+                                      {{ motion.attributes.member_threshold }}
+                                    </td>
+                                    <td class="is-hidden-mobile">{{ motion.attributes.yes_votes_count }}</td>
+                                    <td class="is-hidden-mobile">{{ motion.attributes.no_votes_count }}</td>
+                                    <td>
+                                      {{ motion.attributes.status }}
+                                    </td>
+                                    <td>
+                                      <i *ngIf="motion.attributes.executed === true" class="fa fa-check" style="color: forestgreen"></i>
+                                      <i *ngIf="motion.attributes.executed === false" class="fa fa-times" style="color: darkred"></i>
+                                    </td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/council/motion/{{ motion.attributes.proposal_id }}">{{ 'Council-motion-list.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="no-items" *ngIf="motions?.data.length == 0 && !motions.is_loading">{{ 'Council-motion-list.No items' | translate }}</div>
+                    </div>
+                </div>
+                <footer class="card-footer" *ngIf="motions?.data.length == 25">
+                    <a routerLink="." [queryParams]="{ page: currentPage + 1}" class="card-footer-item">{{ 'Council-motion-list.View next' | translate }}</a>
+                </footer>
+            </div>
+        </section>
+    </div>
+</div>

@@ -1,0 +1,23 @@
+.truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 1024px;
+    display: inline-block;
+    vertical-align: bottom;
+}
+
+.error-message {
+  display: inline-block;
+  margin-left: 10px;
+  background-color: rgba(222,68,55,.1);
+  color: #de4437;
+  padding: 2px 5px;
+  border-radius: 5px;
+}
+
+@media screen and (max-width: 1088px) {
+  .truncate {
+    max-width: 512px;
+  }
+}

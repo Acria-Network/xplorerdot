@@ -1,0 +1,26 @@
+<table class="table is-striped is-bordered is-narrow" *ngIf="checkType(struct) === 'object'">
+  <tbody>
+    <tr *ngFor="let item of struct | keyvalue">
+      <td *ngIf="!(checkType(item.value) === 'object' && item.value?.type)" width="20%">{{ item.key }}</td>
+      <td *ngIf="checkType(item.value) === 'object' && item.value?.type" width="20%">{{ item.value.name }}</td>
+
+      <td *ngIf="checkType(item.value) !== 'object'">{{ item.value }}</td>
+      <td *ngIf="checkType(item.value) === 'object' && item.value?.type">
+        <app-render-type
+          [item]="item.value"
+          [networkTokenDecimals]="networkTokenDecimals"
+          [networkTokenSymbol]="networkTokenSymbol"
+          [networkURLPrefix]="networkURLPrefix"
+        ></app-render-type></td>
+      <td *ngIf="checkType(item.value) === 'object' && !item.value?.type">
+        <app-struct
+          [struct]="item.value"
+          [networkTokenDecimals]="networkTokenDecimals"
+          [networkTokenSymbol]="networkTokenSymbol"
+          [networkURLPrefix]="networkURLPrefix"
+        ></app-struct>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<span *ngIf="checkType(struct) !== 'object'">{{ struct }}</span>

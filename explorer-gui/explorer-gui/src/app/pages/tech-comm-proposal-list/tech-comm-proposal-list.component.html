@@ -1,0 +1,65 @@
+<div class="columns">
+    <div class="column is-12">
+        <app-polkascan-header></app-polkascan-header>
+        <section>
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'Tech-comm-proposal-list.Technical committee proposals' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="list" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-microchip fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="proposals?.is_loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="proposals?.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'Tech-comm-proposal-list.Proposal ID' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'Tech-comm-proposal-list.Created at Block' | translate }}</th>
+                                <th>{{ 'Tech-comm-proposal-list.Member Threshold' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'Tech-comm-proposal-list.Aye votes' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'Tech-comm-proposal-list.Nay votes' | translate }}</th>
+                                <th>{{ 'Tech-comm-proposal-list.Status' | translate }}</th>
+                                <th>{{ 'Tech-comm-proposal-list.Executed' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let proposal of proposals.data; trackBy: proposals.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-microchip"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/techcomm/proposal/{{ proposal.attributes.proposal_id }}">{{ proposal.attributes.proposal_id }}</a></td>
+                                    <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/block/{{ proposal.attributes.created_at_block }}">{{ proposal.attributes.created_at_block }}</a></td>
+                                    <td>
+                                      {{ proposal.attributes.member_threshold }}
+                                    </td>
+                                    <td class="is-hidden-mobile">{{ proposal.attributes.yes_votes_count }}</td>
+                                    <td class="is-hidden-mobile">{{ proposal.attributes.no_votes_count }}</td>
+                                    <td>
+                                      {{ proposal.attributes.status }}
+                                    </td>
+                                    <td>
+                                      <i *ngIf="proposal.attributes.executed === true" class="fa fa-check" style="color: forestgreen"></i>
+                                      <i *ngIf="proposal.attributes.executed === false" class="fa fa-times" style="color: darkred"></i>
+                                    </td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/techcomm/proposal/{{ proposal.attributes.proposal_id }}">{{ 'Tech-comm-proposal-list.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="no-items" *ngIf="proposals?.data.length == 0 && !proposals.is_loading">{{ 'Tech-comm-proposal-list.No items' | translate }}</div>
+                    </div>
+                </div>
+                <footer class="card-footer" *ngIf="proposals?.data.length == 25">
+                    <a routerLink="." [queryParams]="{ page: currentPage + 1}" class="card-footer-item">{{ 'Tech-comm-proposal-list.View next' | translate }}</a>
+                </footer>
+            </div>
+        </section>
+    </div>
+</div>

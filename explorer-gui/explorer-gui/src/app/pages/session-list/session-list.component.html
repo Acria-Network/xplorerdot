@@ -1,0 +1,52 @@
+<div class="columns">
+    <div class="column is-12">
+        <app-polkascan-header></app-polkascan-header>
+        <section>
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'session-list.Sessions' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="list" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-user-clock fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="!sessions || sessions.is_loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="sessions && sessions.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'session-list.Session ID' | translate }}</th>
+                                <th>{{ 'session-list.Start at Block' | translate }}</th>
+                                <th># {{ 'session-list.Blocks' | translate }}</th>
+                                <th># {{ 'session-list.Validators' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let session of sessions.data; trackBy: sessions.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-user-clock"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/session/session/{{ session.attributes.id }}">{{ session.attributes.id }}</a></td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/block/{{ session.attributes.start_at_block }}">{{ session.attributes.start_at_block }}</a></td>
+                                    <td>{{ session.attributes.count_blocks || '-'}}</td>
+                                    <td>{{ session.attributes.count_validators }}</td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/session/session/{{ session.attributes.id }}">{{ 'session-list.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="no-items" *ngIf="sessions && sessions.data.length == 0 && !sessions.is_loading">{{ 'session-list.No items' | translate }}</div>
+                    </div>
+                </div>
+                <footer class="card-footer" *ngIf="sessions && sessions.data.length > 0">
+                    <a routerLink="." [queryParams]="{ page: currentPage + 1}" class="card-footer-item">{{ 'session-list.View next' | translate }}</a>
+                </footer>
+            </div>
+        </section>
+    </div>
+</div>

@@ -1,0 +1,84 @@
+<div class="column is-12">
+    <app-polkascan-header></app-polkascan-header>
+    <div *ngIf="session$ | async as session">
+        <section class="info-tiles">
+          <div class="card events-card">
+              <header class="card-header">
+                  <p class="card-header-title">
+                      {{ 'session-detail.Session' | translate }} #{{ session.attributes.id }}
+                  </p>
+                  <a [routerLink]="" fragment="details" class="card-header-icon" aria-label="more options">
+                 <span class="icon"><i class="fa fa-user-clock fa-2x"></i></span>
+                </a>
+              </header>
+              <div class="card-table" *ngIf="session">
+                  <div class="content">
+                      <table class="table is-fullwidth is-striped">
+                          <tbody>
+                              <tr>
+                                <td width="20%">{{ 'session-detail.Start at block' | translate }}</td>
+                                <td><a routerLink="{{ networkURLPrefix }}/block/{{ session.attributes.start_at_block }}">{{ session.attributes.start_at_block }}</a></td>
+                              </tr>
+                              <tr>
+                                <td width="20%">{{ 'session-detail.End at block' | translate }}</td>
+                                <td><a routerLink="{{ networkURLPrefix }}/block/{{ session.attributes.end_at_block }}">{{ session.attributes.end_at_block }}</a></td>
+                              </tr>
+                              <tr>
+                                <td width="20%">{{ 'session-detail.Era' | translate }}</td>
+                                <td>{{ session.attributes.era || 'N/A'}}</td>
+                              </tr>
+                              <tr>
+                                <td width="20%"># {{ 'session-detail.Blocks' | translate }}</td>
+                                <td>{{ session.attributes.count_blocks }}</td>
+                              </tr>
+                              <tr>
+                                <td width="20%"># {{ 'session-detail.Validators' | translate }}</td>
+                                <td>{{ session.attributes.count_validators }}</td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+        </section>
+        <section id="validators">
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'session-detail.Validators' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="validators" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-user-shield fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="session.relationships.validators.loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="session.relationships.validators.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'session-detail.Address' | translate }}</th>
+                                <th>{{ 'session-detail.Total bonded' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let validator of session.relationships.validators.data; trackBy: session.relationships.validators.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-user-shield"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/account/{{ validator.attributes.validator_stash_account?.attributes.address }}"><app-address [account]="validator.attributes.validator_stash_account"></app-address></a></td>
+                                    <td>{{ formatBalance(validator.attributes.bonded_total || 0) | number:'1.0-15'}} {{ networkTokenSymbol }}</td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/session/validator/{{ validator.id }}">{{ 'session-detail.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>

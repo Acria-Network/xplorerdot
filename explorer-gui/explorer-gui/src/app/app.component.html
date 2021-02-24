@@ -1,0 +1,82 @@
+<div [ngClass]="{
+    'network-westend': currentNetwork?.attributes.network_id == 'westend' || currentNetwork?.attributes.network_id == 'westend-m2',
+    'network-kusama': ['kusama', 'kusama-cc1', 'kusama-cc2', 'kusama-cc3', 'kusama-cc4', 'kusama-cc5'].includes(currentNetwork?.attributes.network_id),
+    'network-polkadot': ['polkadot', 'polkadot-cc1', 'polkadot-cc2', 'polkadot-cc3', 'polkadot-cc4', 'polkadot-cc5'].includes(currentNetwork?.attributes.network_id),
+    'network-edgeware': currentNetwork?.attributes.network_id == 'edgeware' || currentNetwork?.attributes.network_id == 'edgeware-berlin',
+    'network-edgeware-testnet': currentNetwork?.attributes.network_id == 'edgeware-testnet',
+    'network-straightedge': currentNetwork?.attributes.network_id == 'straightedge',
+    'network-darwinia': currentNetwork?.attributes.network_id == 'darwinia',
+    'network-kulupu': currentNetwork?.attributes.network_id == 'kulupu',
+    'network-miniplasm': currentNetwork?.attributes.network_id == 'miniplasm' || currentNetwork?.attributes.network_id == 'plasm-testnet' || currentNetwork?.attributes.network_id == 'plasm-testnet-v3',
+    'network-acala': currentNetwork?.attributes.network_id == 'acala' || currentNetwork?.attributes.network_id == 'acala-mandala' || currentNetwork?.attributes.network_id == 'acala-mandala-tc2',
+    'network-nodle': currentNetwork?.attributes.network_id == 'nodle' || currentNetwork?.attributes.network_id == 'nodle-arcadia',
+    'network-centrifuge': currentNetwork?.attributes.network_id == 'centrifuge' || currentNetwork?.attributes.network_id == 'centrifuge-amber' || currentNetwork?.attributes.network_id == 'centrifuge-amber-cc2',
+    'network-robonomics': currentNetwork?.attributes.network_id == 'robonomics' || currentNetwork?.attributes.network_id == 'robonomics-testnet',
+    'network-datahighway': currentNetwork?.attributes.network_id == 'datahighway' || currentNetwork?.attributes.network_id == 'datahighway-testnet',
+    'network-encointer': currentNetwork?.attributes.network_id == 'encointer' || currentNetwork?.attributes.network_id == 'encointer-gesell',
+    'network-joystream': currentNetwork?.attributes.network_id == 'joystream' || currentNetwork?.attributes.network_id == 'joystream-testnet'
+  }">
+
+  <nav class="navbar networks is-black">
+      <div class="container">
+          <div class="navbar-brand">
+              <a class="navbar-item brand-text" routerLink="/" (click)="resetNetwork()">
+                <img src="assets/logo.png" width="120">
+              </a>
+              <div class="is-hidden-desktop network-name">
+                <i *ngIf="currentNetwork?.attributes.chain_type == 'para'" class="fa fa-project-diagram network-icon current-network"  [style.color]="'#' + currentNetwork?.attributes.color_code" title="Parachain"></i>
+                <i *ngIf="currentNetwork?.attributes.chain_type == 'relay'" class="fa fa-globe network-icon current-network" [style.color]="'#' + currentNetwork?.attributes.color_code" title="Relay chain"></i>
+                {{ currentNetwork?.attributes.name || 'Network'  }}
+              </div>
+              <div class="navbar-burger burger" data-target="navMenu-networks" [ngClass]="{'is-active': showNavigation}" (click)="toggleNavigation()">
+                  <span class="icon">
+                    <i class="fa fa-angle-down" aria-hidden="true"></i>
+                  </span>
+              </div>
+          </div>
+          <div id="navMenu-networks" class="navbar-menu" [ngClass]="{'is-active': showNavigation}">
+            <div class="navbar-end">
+                <div class="navbar-item has-dropdown" [ngClass]="{'is-hoverable': showSubmenus}">
+                  <a class="navbar-link is-hidden-touch">
+                    <i *ngIf="currentNetwork?.attributes.chain_type == 'para'" class="fa fa-project-diagram network-icon current-network"  [style.color]="'#' + currentNetwork?.attributes.color_code" title="Parachain"></i>
+                    <i *ngIf="currentNetwork?.attributes.chain_type == 'relay'" class="fa fa-globe network-icon current-network" [style.color]="'#' + currentNetwork?.attributes.color_code" title="Relay chain"></i>
+                    {{ currentNetwork?.attributes.name || 'Global.Network' | translate }}
+                  </a>
+                  <div *ngIf="networks?.data.length > 0" class="navbar-dropdown" (click)="toggleSubmenus()">
+                    <a *ngFor="let network of networks.data; trackBy: networks.trackBy" class="navbar-item" (click)="switchNetwork(network)" [routerLink]="'/' + network.attributes.network_id">
+                      <i *ngIf="network.attributes.chain_type == 'para'" class="fa fa-project-diagram network-icon"  [style.color]="'#' + network.attributes.color_code" title="Parachain"></i>
+                      <i *ngIf="network.attributes.chain_type == 'relay'" class="fa fa-globe network-icon" [style.color]="'#' + network.attributes.color_code" title="Relay chain"></i>
+                      {{ network.attributes.name }}
+                    </a>
+                  </div>
+                </div>
+                <div class="navbar-item has-dropdown" [ngClass]="{'is-hoverable': showSubmenus}">
+                  <a class="navbar-link">
+                      <i class="fa fa-language language-icon" aria-hidden="true"></i> {{ langsTitle(selectedLanguage) }}
+                  </a>
+                  <div class="navbar-dropdown" (click)="toggleSubmenus()">
+                    <ul *ngFor="let lang of langs">
+                      <li>
+                        <a class="navbar-item" (click)="selectedLanguage = lang; translate.use(lang)">
+                          {{ langsTitle(lang) }}
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+            </div>
+          </div>
+      </div>
+  </nav>
+
+  <router-outlet></router-outlet>
+  <article id="privacy-notice" class="message" *ngIf="showLegalMessage">
+  <div class="message-body">
+    <div class="columns">
+      <div class="column is-1"></div>
+      <div class="column is-8">{{ 'Global.DisclaimerTextPre' | translate }} <a routerLink="/legal/privacy-policy">{{ 'Global.DisclaimerTextPrivacyPolicy' | translate }}</a> {{ 'Global.DisclaimerTextAnd' | translate }} <a routerLink="/legal/terms-of-use">{{ 'Global.DisclaimerTextTermsOfUse' | translate }}</a>.</div>
+      <div class="column is-3 is-left"><button class="button is-primary" (click)="agreeTerms()" angulartics2On="click" angularticsAction="AgreeTerms">{{ 'Global.DisclaimerButton' | translate }}</button></div>
+    </div>
+  </div>
+</article>
+</div>

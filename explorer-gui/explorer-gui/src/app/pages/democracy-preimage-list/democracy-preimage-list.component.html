@@ -1,0 +1,52 @@
+<div class="columns">
+    <div class="column is-12">
+        <app-polkascan-header></app-polkascan-header>
+        <section>
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'Democracy-preimage-list.Democracy Proposal Preimages' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="list" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-file-code fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="!preimages || preimages.is_loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="preimages && preimages.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'Democracy-preimage-list.Hash' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'Democracy-preimage-list.Created at Block' | translate }}</th>
+                                <th>{{ 'Democracy-preimage-list.Status' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let preimage of preimages.data; trackBy: preimages.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-file-code"></i>
+                                    </td>
+                                    <td><a class="mobile-hash-format" routerLink="{{ networkURLPrefix }}/democracy/preimage/0x{{ preimage.attributes.hash }}">0x{{ preimage.attributes.hash }}</a></td>
+                                    <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/block/{{ preimage.attributes.created_at_block }}">{{ preimage.attributes.created_at_block }}</a></td>
+                                    <td>
+                                      {{ preimage.attributes.status }}
+                                    </td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/democracy/preimage/0x{{ preimage.attributes.hash }}">{{ 'Democracy-preimage-list.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="no-items" *ngIf="preimages && preimages.data.length == 0 && !preimages.is_loading">{{ 'Democracy-preimage-list.No items' | translate }}</div>
+                    </div>
+                </div>
+                <footer class="card-footer" *ngIf="preimages && preimages.data.length == 25">
+                    <a routerLink="." [queryParams]="{ page: currentPage + 1}" class="card-footer-item">{{ 'Democracy-preimage-list.View next' | translate }}</a>
+                </footer>
+            </div>
+        </section>
+    </div>
+</div>

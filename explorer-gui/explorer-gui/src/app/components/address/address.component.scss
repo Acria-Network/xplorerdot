@@ -1,0 +1,46 @@
+.address-info, app-identicon {
+  display: inline-block;
+  vertical-align: middle;
+
+  .identity-judgement {
+    display: inline-block;
+    margin-right: 4px;
+  }
+
+  .display-name {
+    display: inline-block;
+    color: #333;
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+
+    &.has-identity:not(.judgement-pos) {
+      opacity: 0.66;
+    }
+    &.has-identity.judgement-neg {
+      opacity: 0.66;
+    }
+  }
+
+  .sub-ident-name {
+    margin-left: 4px;
+    display: inline-block;
+    font-size: 0.8em;
+    color: #333;
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+  }
+}
+
+.index {
+  color: #888;
+  font-size: 12px;
+}
+
+@media screen and (max-width: 1088px) {
+  .address-info .name, .address-info .index {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 198px;
+  }
+}

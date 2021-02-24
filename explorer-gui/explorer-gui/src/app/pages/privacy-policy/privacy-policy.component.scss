@@ -1,0 +1,30 @@
+h1, h2 {
+  line-height: 1.25;
+  margin-bottom: 16px;
+  margin-top: 24px;
+  padding-bottom: .3em;
+  display: block;
+}
+
+h1 {
+  font-size: 200%;
+}
+
+h2 {
+  font-size: 150%;
+}
+
+ul {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+li {
+  list-style-type: disc;
+  margin-left: 20px;
+}
+
+p {
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+}

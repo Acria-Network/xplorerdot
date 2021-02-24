@@ -1,0 +1,236 @@
+<div class="columns">
+  <div class="column is-12">
+      <app-polkascan-header></app-polkascan-header>
+
+      <div *ngIf="runtimeModule$ | async as runtimeModule">
+        <section class="info-tiles">
+          <div class="card events-card">
+              <header class="card-header">
+                  <p class="card-header-title">
+                      {{ 'runtime-module-detail.Runtime module' | translate }} "{{ runtimeModule.attributes.name }}" {{ 'runtime-module-detail.for runtime' | translate }} # {{ runtimeModule.attributes.spec_version }}
+                  </p>
+                  <a [routerLink]="" fragment="details" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-cog fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+              </header>
+              <div class="card-table" *ngIf="runtimeModule">
+                  <div class="content">
+                      <table class="table is-fullwidth is-striped">
+                          <tbody>
+                              <tr>
+                                  <td width="20%">{{ 'runtime-module-detail.Name' | translate }}</td>
+                                  <td >{{runtimeModule.attributes.name}}</td>
+                              </tr>
+                              <tr>
+                                  <td>{{ 'runtime-module-detail.Spec version' | translate }}</td>
+                                  <td>{{runtimeModule.attributes.spec_version}}</td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
+          </div>
+        </section>
+        <section *ngIf="runtimeModule.relationships.calls.data.length > 0" id="call-functions">
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'runtime-module-detail.Call functions' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="call-functions" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-file-alt fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <table class="table is-fullwidth is-striped">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'runtime-module-detail.Name' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-module-detail.Lookup' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-module-detail.Parameters' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let call of runtimeModule.relationships.calls.data; trackBy: runtimeModule.relationships.calls.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-file-alt"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/runtime-call/{{ call.id }}">{{ call.attributes.name }}</a></td>
+                                    <td class="is-hidden-mobile">{{ call.attributes.lookup }}</td>
+                                    <td class="is-hidden-mobile">{{ call.attributes.count_params }}</td>
+
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/runtime-call/{{ call.id }}">{{ 'runtime-module-detail.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section *ngIf="runtimeModule.relationships.events.data.length > 0" id="events">
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'runtime-module-detail.Events' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="events" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-calendar-check fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <table class="table is-fullwidth is-striped">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'runtime-module-detail.Name' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-module-detail.Lookup' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-module-detail.Attributes' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let event of runtimeModule.relationships.events.data; trackBy: runtimeModule.relationships.events.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-calendar-check"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/runtime-event/{{ event.id }}">{{ event.attributes.name }}</a></td>
+                                    <td class="is-hidden-mobile">{{ event.attributes.lookup }}</td>
+                                    <td class="is-hidden-mobile">{{ event.attributes.count_attributes }}</td>
+
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/runtime-event/{{ event.id }}">{{ 'runtime-module-detail.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section *ngIf="runtimeModule.relationships.storage.data.length > 0" id="storage-functions">
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'runtime-module-detail.Storage functions' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="storage-functions" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-database fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <table class="table is-fullwidth is-striped">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'runtime-module-detail.Name' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-module-detail.Type' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let storage of runtimeModule.relationships.storage.data; trackBy: runtimeModule.relationships.storage.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-database"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/runtime-storage/{{ storage.id }}">{{ storage.attributes.name }}</a></td>
+                                    <td class="is-hidden-mobile">{{ storage.attributes.type_value }}</td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/runtime-storage/{{ storage.id }}">Details</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section *ngIf="runtimeModule.relationships.constants.data.length > 0" id="constants">
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'runtime-module-detail.Constants' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="constants" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-memory fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <table class="table is-fullwidth is-striped">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'runtime-module-detail.Name' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-module-detail.Type' | translate }}</th>
+                                <th>{{ 'runtime-module-detail.Value' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let constant of runtimeModule.relationships.constants.data; trackBy: runtimeModule.relationships.constants.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-memory"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/runtime-constant/{{ constant.id }}">{{ constant.attributes.name }}</a></td>
+                                    <td class="is-hidden-mobile">{{ constant.attributes.type }}</td>
+                                    <td>{{ constant.attributes.value }}</td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/runtime-constant/{{ constant.id }}">{{ 'runtime-module-detail.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section *ngIf="runtimeModule.relationships.errors.data.length > 0" id="errors">
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'runtime-module-detail.Errors' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="constants" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-exclamation-triangle fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <table class="table is-fullwidth is-striped">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'runtime-module-detail.Name' | translate }}</th>
+                                <th>{{ 'runtime-module-detail.Index' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'runtime-module-detail.Description' | translate }}</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let error of runtimeModule.relationships.errors.data; trackBy: runtimeModule.relationships.errors.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-exclamation-triangle"></i>
+                                    </td>
+                                    <td>{{ error.attributes.name }}</td>
+                                    <td>{{ error.attributes.index }}</td>
+                                    <td class="is-hidden-mobile">{{ error.attributes.documentation }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+      </div>
+  </div>
+</div>

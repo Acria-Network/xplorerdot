@@ -1,0 +1,56 @@
+<div class="columns">
+    <div class="column is-12">
+        <app-polkascan-header></app-polkascan-header>
+        <section>
+            <div class="card ">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        {{ 'AccountIndexList.Account Indices' | translate }}
+                    </p>
+                    <a [routerLink]="" fragment="list" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-id-card-alt fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="!accountIndices || accountIndices.is_loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="accountIndices && accountIndices.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'AccountIndexList.Short Address' | translate }}</th>
+                                <th>{{ 'AccountIndexList.Address' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'AccountIndexList.Created at block' | translate }}</th>
+                                <th>{{ 'AccountIndexList.Reclaimable' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let accountIndex of accountIndices.data; trackBy: accountIndices.trackBy">
+                                    <td width="5%">
+                                      <i class="fa fa-id-card-alt"></i>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/indices/account/{{ accountIndex.id }}">{{ accountIndex.attributes.short_address }}</a></td>
+                                    <td *ngIf="!accountIndex.attributes.address">-</td>
+                                    <td *ngIf="accountIndex.attributes.address"><a routerLink="{{ networkURLPrefix }}/account/{{ accountIndex.attributes.address }}" class="address-mobile-format"><app-identicon [accountId]="accountIndex.attributes.account_id"></app-identicon> {{ accountIndex.attributes.address }}</a></td>
+                                    <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/block/{{ accountIndex.attributes.created_at_block }}">{{ accountIndex.attributes.created_at_block }}</a></td>
+                                    <td>
+                                      <i *ngIf="accountIndex.attributes.is_reclaimable" class="fa fa-check" style="color: forestgreen"></i>
+                                      <i *ngIf="!accountIndex.attributes.is_reclaimable" class="fa fa-times" style="color: darkred"></i>
+                                    </td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/indices/account/{{ accountIndex.id }}">{{ 'AccountIndexList.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="no-items" *ngIf="accountIndices.data.length == 0 && !accountIndices.is_loading">{{ 'AccountIndexList.No items' | translate }}</div>
+                    </div>
+                </div>
+                <footer class="card-footer" *ngIf="accountIndices && accountIndices.data.length == 25">
+                    <a routerLink="." [queryParams]="{ page: currentPage + 1}" class="card-footer-item">{{ 'AccountIndexList.View next' | translate }}</a>
+                </footer>
+            </div>
+        </section>
+    </div>
+</div>

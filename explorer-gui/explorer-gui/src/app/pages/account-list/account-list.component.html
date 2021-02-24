@@ -1,0 +1,77 @@
+<div class="columns">
+    <div class="column is-12">
+        <app-polkascan-header></app-polkascan-header>
+        <section>
+            <div class="card ">
+                <header class="card-header">
+                    <ng-container [ngSwitch]="title">
+                      <p class="card-header-title" *ngSwitchCase="'Validators'">
+                        {{ 'AccountList.Validators' | translate }}
+                      </p>
+                      <p class="card-header-title" *ngSwitchCase="'Nominators'">
+                        {{ 'AccountList.Nominators' | translate }}
+                      </p>
+                      <p class="card-header-title" *ngSwitchCase="'Council members'">
+                        {{ 'AccountList.Council members' | translate }}
+                      </p>
+                      <p class="card-header-title" *ngSwitchCase="'Technical committee members'">
+                        {{ 'AccountList.Technical committee members' | translate }}
+                      </p>
+                      <p class="card-header-title" *ngSwitchCase="'Treasury accounts'">
+                        {{ 'AccountList.Treasury accounts' | translate }}
+                      </p>
+                      <p class="card-header-title" *ngSwitchCase="'Sudo accounts'">
+                        {{ 'AccountList.Sudo accounts' | translate }}
+                      </p>
+                      <p class="card-header-title" *ngSwitchCase="'Accounts with identity'">
+                        {{ 'AccountList.Accounts with identity' | translate }}
+                      </p>
+                       <p class="card-header-title" *ngSwitchCase="'Accounts with negative judgement'">
+                        {{ 'AccountList.Accounts with negative judgement' | translate }}
+                      </p>
+                      <p class="card-header-title" *ngSwitchDefault>
+                          {{ 'AccountList.Accounts' | translate }}
+                      </p>
+                    </ng-container>
+                    <a [routerLink]="" fragment="list" class="card-header-icon" aria-label="more options">
+                      <span class="icon">
+                        <i class="fa fa-id-card fa-2x" aria-hidden="true"></i>
+                      </span>
+                    </a>
+                </header>
+                <div class="card-table">
+                    <div class="content">
+                        <app-loading-box *ngIf="!accounts || accounts.is_loading"></app-loading-box>
+                        <table class="table is-fullwidth is-striped" *ngIf="accounts?.data.length > 0">
+                             <thead>
+                              <tr>
+                                <th></th>
+                                <th>{{ 'AccountList.Address' | translate }}</th>
+                                <th *ngIf="showBalances" class="is-hidden-mobile">{{ 'AccountList.Transactions' | translate }}</th>
+                                <th *ngIf="showBalances" class="is-hidden-mobile">{{ 'AccountList.Total balance' | translate }}</th>
+                                <th></th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let account of accounts.data; trackBy: accounts.trackBy; let i = index">
+                                    <td width="5%">
+                                      <i *ngIf="title" class="fa fa-id-card"></i>
+                                      <div *ngIf="!title" class="dot">{{ i + 1 + (currentPage - 1) * 25 }}</div>
+                                    </td>
+                                    <td><a routerLink="{{ networkURLPrefix }}/account/{{ account.attributes.address }}"><app-address [account]="account"></app-address></a></td>
+                                    <td *ngIf="showBalances" class="is-hidden-mobile">{{ account.attributes.nonce || 0 }}</td>
+                                    <td *ngIf="showBalances" class="is-hidden-mobile">{{ formatBalance(account.attributes.balance_total) | number:'1.0-15' }} {{ networkTokenSymbol }}</td>
+                                    <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/account/{{ account.attributes.address }}">{{ 'AccountList.Details' | translate }}</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="no-items" *ngIf="accounts?.data.length == 0 && !accounts?.is_loading">{{ 'AccountList.No items' | translate }}</div>
+                    </div>
+                </div>
+                <footer class="card-footer" *ngIf="accounts && accounts.data.length == 25">
+                    <a routerLink="." [queryParams]="{ page: currentPage + 1}" class="card-footer-item">{{ 'AccountList.View next' | translate }}</a>
+                </footer>
+            </div>
+        </section>
+    </div>
+</div>
