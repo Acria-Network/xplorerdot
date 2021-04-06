@@ -28,7 +28,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="explorer-gui/explorer-gui/src/assets/logo.png" alt="Logo" width="80" height="80">
+    <img src="explorer-gui/explorer-gui/src/assets/logo.png" alt="Logo" width="400" height="80">
   </a>
 
   <h3 align="center">AcriaScan Explorer</h3>
