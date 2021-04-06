@@ -71,74 +71,82 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
-There are many great README templates available on GitHub, however, I didn't find one that really suit my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
+There are many blockchain explorers on GitHub, however, acriascan explorer is the first one which supports polkadot networks. 
 
 Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should element DRY principles to the rest of your life :smile:
+* Acriascan uses it's python backend for it's real time blockchain data.
+* It gets all real time data from several networks.
+* The best explorer which is built on Angular Framework.
 
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue. Thanks to all the people have have contributed to expanding this template!
-
-A list of commonly used resources that I find helpful are listed in the acknowledgements.
 
 ### Built With
 
-This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-* [Bootstrap](https://getbootstrap.com)
-* [JQuery](https://jquery.com)
-* [Laravel](https://laravel.com)
+* [Python](https://python.org)
+* [AngularJS](https://angular.io)
+* [Docker](https://docker.com)
 
 
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+This is the guide of how you may give instructions on setting up your project on server.
+To get a copy up and running follow these simple example steps.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
+This is the packages you have to install on the server before deploy the AcriaScan explorer.
+* docker
   ```sh
-  npm install npm@latest -g
+  sudo apt-get install docker.io
   ```
-
+* nodejs
+  ```sh
+  sudo apt-get install nodejs
+  ```
+* angular
+  
+  ```sh
+  sudo npm install -g @angular/cli
+  ```
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Clone the repo
    ```sh
-   git clone https://github.com/your_username_/Project-Name.git
+   git clone https://github.com/Acria-Network/xplorerdot.git
    ```
-3. Install NPM packages
+2. Run Harvester
    ```sh
-   npm install
+   cd harvester
+   docker-compose up –build
    ```
-4. Enter your API in `config.js`
+3. Run Explorer API
    ```JS
-   const API_KEY = 'ENTER YOUR API';
+   cd explorer-api
+   docker-compose up –build
    ```
+4. Run Explorer gui
+   ```sh
+   cd explorer-gui
+   npm install
+   npm start
+   docker build -t appui .
+   docker run -d --name appui -p 80:80 appui
 
+   ```
 
 
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
-
-_For more examples, please refer to the [Documentation](https://example.com)_
-
+This project can be used for searching blocks and transactions of polkadot, kusama, rococo networks.
+It also provides many things for getting information for polka networks.
 
 
 <!-- ROADMAP -->
 ## Roadmap
 
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a list of proposed features (and known issues).
-
+See the [open issues](https://github.com/Acria-Network/xplorerdot/issues) for a list of proposed features (and known issues).
 
 
 <!-- CONTRIBUTING -->
@@ -164,25 +172,17 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
-
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project Link: [https://github.com/Acria-Network/xplorerdot](https://github.com/Acria-Network/xplorerdot)
 
 
 
 <!-- ACKNOWLEDGEMENTS -->
 ## Acknowledgements
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Img Shields](https://shields.io)
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Pages](https://pages.github.com)
-* [Animate.css](https://daneden.github.io/animate.css)
-* [Loaders.css](https://connoratherton.com/loaders)
-* [Slick Carousel](https://kenwheeler.github.io/slick)
-* [Smooth Scroll](https://github.com/cferdinandi/smooth-scroll)
-* [Sticky Kit](http://leafo.net/sticky-kit)
-* [JVectorMap](http://jvectormap.com)
-* [Font Awesome](https://fontawesome.com)
+* [Python](https://python.org)
+* [AngularJS](https://angular.io)
+* [NodeJS](https://nodejs.org)
+* [Docker](https://docker.com)
+* [MySQL](https://mysql.com)
 
 
 
