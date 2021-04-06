@@ -57,6 +57,8 @@ export class BlockDetailComponent implements OnInit, OnDestroy {
 
   private fragmentSubsription: Subscription;
 
+  public countDown: number;
+
   constructor(
     private route: ActivatedRoute,
     private blockService: BlockService,
@@ -70,6 +72,7 @@ export class BlockDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.resourceNotFound = false;
+    this.countDown = 6;
 
     this.currentTab = 'transactions';
 
@@ -102,6 +105,11 @@ export class BlockDetailComponent implements OnInit, OnDestroy {
       }, error => {
         if (error.status === 404) {
           this.resourceNotFound = true;
+          this.processCountDown();
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 6000);
         }
       });
 
@@ -113,6 +121,13 @@ export class BlockDetailComponent implements OnInit, OnDestroy {
         })
       );
     });
+  }
+
+  processCountDown() {
+    setTimeout(() => {
+      this.countDown--;
+      this.processCountDown();
+    }, 1000);
   }
 
   ngOnDestroy() {

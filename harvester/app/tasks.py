@@ -25,7 +25,7 @@ import celery
 from celery.result import AsyncResult
 
 from app import settings
-from scalecodec.base import ScaleDecoder, ScaleBytes
+from scalecodec.base import ScaleDecoder, ScaleBytes, RuntimeConfiguration
 
 from sqlalchemy import create_engine, text, distinct
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
@@ -36,10 +36,10 @@ from app.models.data import Extrinsic, Block, BlockTotal, Account, AccountInfoSn
 from app.models.harvester import Status
 from app.processors.converters import PolkascanHarvesterService, HarvesterCouldNotAddBlock, BlockAlreadyAdded, \
     BlockIntegrityError
-from scalecodec.exceptions import RemainingScaleBytesNotEmptyException
-from substrateinterface import SubstrateInterface, xxh128
 
-from app.settings import DB_CONNECTION, DEBUG, SUBSTRATE_RPC_URL, TYPE_REGISTRY, FINALIZATION_ONLY
+from substrateinterface import SubstrateInterface
+
+from app.settings import DB_CONNECTION, DEBUG, SUBSTRATE_RPC_URL, TYPE_REGISTRY, FINALIZATION_ONLY, TYPE_REGISTRY_FILE
 
 CELERY_BROKER = os.environ.get('CELERY_BROKER')
 CELERY_BACKEND = os.environ.get('CELERY_BACKEND')
@@ -63,7 +63,7 @@ class BaseTask(celery.Task):
         self.metadata_store = {}
 
     def __call__(self, *args, **kwargs):
-        self.engine = create_engine(DB_CONNECTION, echo=DEBUG, isolation_level="READ_UNCOMMITTED")
+        self.engine = create_engine(DB_CONNECTION, echo=DEBUG, isolation_level="READ_UNCOMMITTED", pool_pre_ping=True)
         session_factory = sessionmaker(bind=self.engine, autoflush=False, autocommit=False)
         self.session = scoped_session(session_factory)
 
@@ -79,23 +79,33 @@ class BaseTask(celery.Task):
 @app.task(base=BaseTask, bind=True)
 def accumulate_block_recursive(self, block_hash, end_block_hash=None):
 
-    harvester = PolkascanHarvesterService(self.session, type_registry=TYPE_REGISTRY)
+    harvester = PolkascanHarvesterService(
+        db_session=self.session,
+        type_registry=TYPE_REGISTRY,
+        type_registry_file=TYPE_REGISTRY_FILE
+    )
+
     harvester.metadata_store = self.metadata_store
+    harvester.substrate.metadata_cache = self.metadata_store
 
     # If metadata store isn't initialized yet, perform some tests
-    if not harvester.metadata_store:
-        print('Init: create entrypoints')
-        # Check if blocks exists
-        max_block_id = self.session.query(func.max(Block.id)).one()[0]
-
-        if not max_block_id:
-            # Speed up accumulating by creating several entry points
-            substrate = SubstrateInterface(SUBSTRATE_RPC_URL)
-            block_nr = substrate.get_block_number(block_hash)
-            if block_nr > 100:
-                for entry_point in range(0, block_nr, block_nr // 4)[1:-1]:
-                    entry_point_hash = substrate.get_block_hash(entry_point)
-                    accumulate_block_recursive.delay(entry_point_hash)
+    # if not harvester.metadata_store:
+    #     print('Init: create entrypoints')
+    #     # Check if blocks exists
+    #     max_block_id = self.session.query(func.max(Block.id)).one()[0]
+    #
+    #     if not max_block_id:
+    #         # Speed up accumulating by creating several entry points
+    #         substrate = SubstrateInterface(
+    #             url=SUBSTRATE_RPC_URL,
+    #             type_registry_preset=settings.TYPE_REGISTRY,
+    #             runtime_config=RuntimeConfiguration()
+    #         )
+    #         block_nr = substrate.get_block_number(block_hash)
+    #         if block_nr > 100:
+    #             for entry_point in range(0, block_nr, block_nr // 4)[1:-1]:
+    #                 entry_point_hash = substrate.get_block_hash(entry_point)
+    #                 accumulate_block_recursive.delay(entry_point_hash)
 
     block = None
     max_sequenced_block_id = False
@@ -157,7 +167,11 @@ def start_sequencer(self):
         sequencer_task.value = self.request.id
         sequencer_task.save(self.session)
 
-        harvester = PolkascanHarvesterService(self.session, type_registry=TYPE_REGISTRY)
+        harvester = PolkascanHarvesterService(
+            db_session=self.session,
+            type_registry=TYPE_REGISTRY,
+            type_registry_file=TYPE_REGISTRY_FILE
+        )
         try:
             result = harvester.start_sequencer()
         except BlockIntegrityError as e:
@@ -177,14 +191,18 @@ def start_sequencer(self):
 
 
 @app.task(base=BaseTask, bind=True)
-def rebuilding_search_index(self, search_index_id, truncate=False):
+def rebuilding_search_index(self, search_index_id=None, truncate=False):
     if truncate:
         # Clear search index table
         self.session.execute('delete from analytics_search_index where index_type_id={}'.format(search_index_id))
         self.session.commit()
 
-    harvester = PolkascanHarvesterService(self.session, type_registry=TYPE_REGISTRY)
-    harvester.rebuild_search_index(search_index_id)
+    harvester = PolkascanHarvesterService(
+        db_session=self.session,
+        type_registry=TYPE_REGISTRY,
+        type_registry_file=TYPE_REGISTRY_FILE
+    )
+    harvester.rebuild_search_index()
 
     return {'result': 'index rebuilt'}
 
@@ -192,7 +210,11 @@ def rebuilding_search_index(self, search_index_id, truncate=False):
 @app.task(base=BaseTask, bind=True)
 def start_harvester(self, check_gaps=False):
 
-    substrate = SubstrateInterface(SUBSTRATE_RPC_URL)
+    substrate = SubstrateInterface(
+        url=SUBSTRATE_RPC_URL,
+        type_registry_preset=settings.TYPE_REGISTRY,
+        runtime_config=RuntimeConfiguration()
+    )
 
     block_sets = []
 
@@ -248,7 +270,11 @@ def start_generate_analytics(self):
 
 @app.task(base=BaseTask, bind=True)
 def rebuild_search_index(self):
-    harvester = PolkascanHarvesterService(self.session, type_registry=TYPE_REGISTRY)
+    harvester = PolkascanHarvesterService(
+        db_session=self.session,
+        type_registry=TYPE_REGISTRY,
+        type_registry_file=TYPE_REGISTRY_FILE
+    )
     harvester.rebuild_search_index()
 
     return {'result': 'search index rebuilt'}
@@ -256,8 +282,11 @@ def rebuild_search_index(self):
 
 @app.task(base=BaseTask, bind=True)
 def rebuild_account_info_snapshot(self):
-
-    harvester = PolkascanHarvesterService(self.session, type_registry=TYPE_REGISTRY)
+    harvester = PolkascanHarvesterService(
+        db_session=self.session,
+        type_registry=TYPE_REGISTRY,
+        type_registry_file=TYPE_REGISTRY_FILE
+    )
 
     last_full_snapshot_block_nr = 0
 
@@ -317,7 +346,11 @@ def balance_snapshot(self, account_id=None, block_start=1, block_end=None, block
     else:
         accounts = [account.id for account in Account.query(self.session)]
 
-    harvester = PolkascanHarvesterService(self.session, type_registry=TYPE_REGISTRY)
+    harvester = PolkascanHarvesterService(
+        db_session=self.session,
+        type_registry=TYPE_REGISTRY,
+        type_registry_file=TYPE_REGISTRY_FILE
+    )
 
     if block_ids:
         block_range = block_ids
@@ -325,7 +358,11 @@ def balance_snapshot(self, account_id=None, block_start=1, block_end=None, block
 
         if block_end is None:
             # Set block end to chaintip
-            substrate = SubstrateInterface(SUBSTRATE_RPC_URL)
+            substrate = SubstrateInterface(
+                url=SUBSTRATE_RPC_URL,
+                runtime_config=RuntimeConfiguration(),
+                type_registry_preset=settings.TYPE_REGISTRY
+            )
             block_end = substrate.get_block_number(substrate.get_chain_finalised_head())
 
         block_range = range(block_start, block_end + 1)
@@ -346,7 +383,11 @@ def balance_snapshot(self, account_id=None, block_start=1, block_end=None, block
 
 @app.task(base=BaseTask, bind=True)
 def update_balances_in_block(self, block_id):
-    harvester = PolkascanHarvesterService(self.session, type_registry=TYPE_REGISTRY)
+    harvester = PolkascanHarvesterService(
+        db_session=self.session,
+        type_registry=TYPE_REGISTRY,
+        type_registry_file=TYPE_REGISTRY_FILE
+    )
 
     harvester.create_full_balance_snaphot(block_id)
     self.session.commit()

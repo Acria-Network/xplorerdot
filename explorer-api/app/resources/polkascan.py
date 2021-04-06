@@ -17,6 +17,8 @@
 #  along with Polkascan. If not, see <http://www.gnu.org/licenses/>.
 #
 #  polkascan.py
+from hashlib import blake2b
+
 import binascii
 
 import falcon
@@ -32,8 +34,6 @@ from app.models.data import Block, Extrinsic, Event, RuntimeCall, RuntimeEvent, 
     BlockTotal, SessionValidator, Log, AccountIndex, RuntimeConstant, SessionNominator, \
     RuntimeErrorMessage, SearchIndex, AccountInfoSnapshot
 from app.resources.base import JSONAPIResource, JSONAPIListResource, JSONAPIDetailResource, BaseResource
-from app.settings import SUBSTRATE_RPC_URL, SUBSTRATE_METADATA_VERSION, SUBSTRATE_ADDRESS_TYPE, TYPE_REGISTRY, \
-    SEARCH_INDEX_BALANCETRANSFER, SUBSTRATE_STORAGE_BALANCE
 from app.utils.ss58 import ss58_decode, ss58_encode
 from scalecodec.base import RuntimeConfiguration
 from substrateinterface import SubstrateInterface
@@ -124,7 +124,7 @@ class BlockTotalListResource(JSONAPIListResource):
                 account_id = params.get('filter[author]')
             else:
                 try:
-                    account_id = ss58_decode(params.get('filter[author]'), SUBSTRATE_ADDRESS_TYPE)
+                    account_id = ss58_decode(params.get('filter[author]'), settings.SUBSTRATE_ADDRESS_TYPE)
                 except ValueError:
                     return query.filter(False)
 
@@ -168,7 +168,7 @@ class ExtrinsicListResource(JSONAPIListResource):
                 account_id = params.get('filter[address]')
             else:
                 try:
-                    account_id = ss58_decode(params.get('filter[address]'), SUBSTRATE_ADDRESS_TYPE)
+                    account_id = ss58_decode(params.get('filter[address]'), settings.SUBSTRATE_ADDRESS_TYPE)
                 except ValueError:
                     return query.filter(False)
         else:
@@ -241,6 +241,28 @@ class ExtrinsicDetailResource(JSONAPIDetailResource):
 
         return relationships
 
+    def check_params(self, params, identifier):
+        for idx, param in enumerate(params):
+
+            if 'value' in param and 'type' in param:
+
+                if type(param['value']) is list:
+                    param['value'] = self.check_params(param['value'], identifier)
+
+                else:
+                    if param['type'] == 'Box<Call>':
+                        param['value']['call_args'] = self.check_params(param['value']['call_args'], identifier)
+
+                    elif type(param['value']) is str and len(param['value']) > 200000:
+                        param['value'] = "{}/{}".format(
+                            identifier,
+                            blake2b(bytes.fromhex(param['value'].replace('0x', '')), digest_size=32).digest().hex()
+                        )
+                        param["type"] = "DownloadableBytesHash"
+                        param['valueRaw'] = ""
+
+        return params
+
     def serialize_item(self, item):
         data = item.serialize()
 
@@ -259,6 +281,9 @@ class ExtrinsicDetailResource(JSONAPIDetailResource):
         if item.account:
             data['attributes']['account'] = item.account.serialize()
 
+        if item.params:
+            item.params = self.check_params(item.params, item.serialize_id())
+
         if item.error:
             # Retrieve ExtrinsicFailed event
             extrinsic_failed_event = Event.query(self.session).filter_by(
@@ -271,7 +296,7 @@ class ExtrinsicDetailResource(JSONAPIDetailResource):
                 if 'Module' in extrinsic_failed_event.attributes[0]['value']:
 
                     error = RuntimeErrorMessage.query(self.session).filter_by(
-                        module_id=item.module_id,
+                        module_index=extrinsic_failed_event.attributes[0]['value']['Module']['index'],
                         index=extrinsic_failed_event.attributes[0]['value']['Module']['error'],
                         spec_version=item.spec_version_id
                     ).first()
@@ -296,7 +321,7 @@ class EventsListResource(JSONAPIListResource):
                 account_id = params.get('filter[address]')
             else:
                 try:
-                    account_id = ss58_decode(params.get('filter[address]'), SUBSTRATE_ADDRESS_TYPE)
+                    account_id = ss58_decode(params.get('filter[address]'), settings.SUBSTRATE_ADDRESS_TYPE)
                 except ValueError:
                     return query.filter(False)
         else:
@@ -444,7 +469,7 @@ class BalanceTransferListResource(JSONAPIListResource):
                 account_id = params.get('filter[address]')
             else:
                 try:
-                    account_id = ss58_decode(params.get('filter[address]'), SUBSTRATE_ADDRESS_TYPE)
+                    account_id = ss58_decode(params.get('filter[address]'), settings.SUBSTRATE_ADDRESS_TYPE)
                 except ValueError:
                     return query.filter(False)
 
@@ -452,7 +477,8 @@ class BalanceTransferListResource(JSONAPIListResource):
                 SearchIndex.index_type_id.in_([
                     settings.SEARCH_INDEX_BALANCETRANSFER,
                     settings.SEARCH_INDEX_CLAIMS_CLAIMED,
-                    settings.SEARCH_INDEX_BALANCES_DEPOSIT
+                    settings.SEARCH_INDEX_BALANCES_DEPOSIT,
+                    settings.SEARCH_INDEX_STAKING_REWARD
                 ]),
                 SearchIndex.account_id == account_id
             ).order_by(SearchIndex.sorting_value.desc())
@@ -478,7 +504,7 @@ class BalanceTransferListResource(JSONAPIListResource):
                     'id': item.attributes[0]['value'].replace('0x', ''),
                     'attributes': {
                         'id': item.attributes[0]['value'].replace('0x', ''),
-                        'address': ss58_encode(item.attributes[0]['value'].replace('0x', ''), SUBSTRATE_ADDRESS_TYPE)
+                        'address': ss58_encode(item.attributes[0]['value'].replace('0x', ''), settings.SUBSTRATE_ADDRESS_TYPE)
                     }
                 }
 
@@ -492,7 +518,7 @@ class BalanceTransferListResource(JSONAPIListResource):
                     'id': item.attributes[1]['value'].replace('0x', ''),
                     'attributes': {
                         'id': item.attributes[1]['value'].replace('0x', ''),
-                        'address': ss58_encode(item.attributes[1]['value'].replace('0x', ''), SUBSTRATE_ADDRESS_TYPE)
+                        'address': ss58_encode(item.attributes[1]['value'].replace('0x', ''), settings.SUBSTRATE_ADDRESS_TYPE)
                     }
                 }
             # Some networks don't have fees
@@ -504,42 +530,22 @@ class BalanceTransferListResource(JSONAPIListResource):
             value = item.attributes[2]['value']
         elif item.event_id == 'Claimed':
 
-            destination = Account.query(self.session).get(item.attributes[0]['value'].replace('0x', ''))
-
-            if destination:
-                destination_data = destination.serialize()
-            else:
-                destination_data = {
-                    'type': 'account',
-                    'id': item.attributes[0]['value'].replace('0x', ''),
-                    'attributes': {
-                        'id': item.attributes[0]['value'].replace('0x', ''),
-                        'address': ss58_encode(item.attributes[0]['value'].replace('0x', ''), SUBSTRATE_ADDRESS_TYPE)
-                    }
-                }
-
             fee = 0
             sender_data = {'name': 'Claim', 'eth_address': item.attributes[1]['value']}
+            destination_data = {}
             value = item.attributes[2]['value']
 
         elif item.event_id == 'Deposit':
 
-            destination = Account.query(self.session).get(item.attributes[0]['value'].replace('0x', ''))
-
-            if destination:
-                destination_data = destination.serialize()
-            else:
-                destination_data = {
-                    'type': 'account',
-                    'id': item.attributes[0]['value'].replace('0x', ''),
-                    'attributes': {
-                        'id': item.attributes[0]['value'].replace('0x', ''),
-                        'address': ss58_encode(item.attributes[0]['value'].replace('0x', ''), SUBSTRATE_ADDRESS_TYPE)
-                    }
-                }
-
             fee = 0
             sender_data = {'name': 'Deposit'}
+            destination_data = {}
+            value = item.attributes[1]['value']
+
+        elif item.event_id == 'Reward':
+            fee = 0
+            sender_data = {'name': 'Staking reward'}
+            destination_data = {}
             value = item.attributes[1]['value']
         else:
             sender_data = {}
@@ -562,8 +568,6 @@ class BalanceTransferListResource(JSONAPIListResource):
         }
 
 
-
-
 class BalanceTransferDetailResource(JSONAPIDetailResource):
 
     def get_item(self, item_id):
@@ -581,7 +585,7 @@ class BalanceTransferDetailResource(JSONAPIDetailResource):
                 'id': item.attributes[0]['value'].replace('0x', ''),
                 'attributes': {
                     'id': item.attributes[0]['value'].replace('0x', ''),
-                    'address': ss58_encode(item.attributes[0]['value'].replace('0x', ''), SUBSTRATE_ADDRESS_TYPE)
+                    'address': ss58_encode(item.attributes[0]['value'].replace('0x', ''), settings.SUBSTRATE_ADDRESS_TYPE)
                 }
             }
 
@@ -595,7 +599,7 @@ class BalanceTransferDetailResource(JSONAPIDetailResource):
                 'id': item.attributes[1]['value'].replace('0x', ''),
                 'attributes': {
                     'id': item.attributes[1]['value'].replace('0x', ''),
-                    'address': ss58_encode(item.attributes[1]['value'].replace('0x', ''), SUBSTRATE_ADDRESS_TYPE)
+                    'address': ss58_encode(item.attributes[1]['value'].replace('0x', ''), settings.SUBSTRATE_ADDRESS_TYPE)
                 }
             }
 
@@ -684,12 +688,12 @@ class AccountResource(JSONAPIListResource):
 
 class AccountDetailResource(JSONAPIDetailResource):
 
-    cache_expiration_time = 6
+    cache_expiration_time = 12
 
     def __init__(self):
         RuntimeConfiguration().update_type_registry(load_type_registry_preset('default'))
-        if TYPE_REGISTRY != 'default':
-            RuntimeConfiguration().update_type_registry(load_type_registry_preset(TYPE_REGISTRY))
+        if settings.TYPE_REGISTRY != 'default':
+            RuntimeConfiguration().update_type_registry(load_type_registry_preset(settings.TYPE_REGISTRY))
         super(AccountDetailResource, self).__init__()
 
     def get_item(self, item_id):
@@ -713,7 +717,7 @@ class AccountDetailResource(JSONAPIDetailResource):
 
         # Get balance history
         account_info_snapshot = AccountInfoSnapshot.query(self.session).filter_by(
-            account_id=item.id
+                account_id=item.id
         ).order_by(AccountInfoSnapshot.block_id.desc())[:1000]
 
         data['attributes']['balance_history'] = [
@@ -721,7 +725,7 @@ class AccountDetailResource(JSONAPIDetailResource):
                 'name': "Total balance",
                 'type': 'line',
                 'data': [
-                    [item.block_id, float((item.balance_total or 0) / 10 ** settings.SUBSTRATE_TOKEN_DECIMALS)]
+                    [item.block_id, float((item.balance_total or 0) / 10**settings.SUBSTRATE_TOKEN_DECIMALS)]
                     for item in reversed(account_info_snapshot)
                 ],
             }
@@ -729,9 +733,12 @@ class AccountDetailResource(JSONAPIDetailResource):
 
         if settings.USE_NODE_RETRIEVE_BALANCES == 'True':
 
-            substrate = SubstrateInterface(SUBSTRATE_RPC_URL)
+            substrate = SubstrateInterface(
+                url=settings.SUBSTRATE_RPC_URL,
+                type_registry_preset=settings.TYPE_REGISTRY
+            )
 
-            if SUBSTRATE_STORAGE_BALANCE == 'Account':
+            if settings.SUBSTRATE_STORAGE_BALANCE == 'Account':
                 storage_call = RuntimeStorage.query(self.session).filter_by(
                     module_id='system',
                     name='Account',
@@ -745,7 +752,7 @@ class AccountDetailResource(JSONAPIDetailResource):
                         params=item.id,
                         return_scale_type=storage_call.type_value,
                         hasher=storage_call.type_hasher,
-                        metadata_version=SUBSTRATE_METADATA_VERSION
+                        metadata_version=settings.SUBSTRATE_METADATA_VERSION
                     )
 
                     if account_data:
@@ -755,7 +762,7 @@ class AccountDetailResource(JSONAPIDetailResource):
                         data['attributes']['fee_frozen_balance'] = account_data['data']['feeFrozen']
                         data['attributes']['nonce'] = account_data['nonce']
 
-            elif SUBSTRATE_STORAGE_BALANCE == 'Balances.Account':
+            elif settings.SUBSTRATE_STORAGE_BALANCE == 'Balances.Account':
 
                 storage_call = RuntimeStorage.query(self.session).filter_by(
                     module_id='balances',
@@ -770,7 +777,7 @@ class AccountDetailResource(JSONAPIDetailResource):
                         params=item.id,
                         return_scale_type=storage_call.type_value,
                         hasher=storage_call.type_hasher,
-                        metadata_version=SUBSTRATE_METADATA_VERSION
+                        metadata_version=settings.SUBSTRATE_METADATA_VERSION
                     )
 
                     if account_data:
@@ -794,7 +801,7 @@ class AccountDetailResource(JSONAPIDetailResource):
                         params=item.id,
                         return_scale_type=storage_call.type_value,
                         hasher=storage_call.type_hasher,
-                        metadata_version=SUBSTRATE_METADATA_VERSION
+                        metadata_version=settings.SUBSTRATE_METADATA_VERSION
                     )
 
                 storage_call = RuntimeStorage.query(self.session).filter_by(
@@ -810,7 +817,7 @@ class AccountDetailResource(JSONAPIDetailResource):
                         params=item.id,
                         return_scale_type=storage_call.type_value,
                         hasher=storage_call.type_hasher,
-                        metadata_version=SUBSTRATE_METADATA_VERSION
+                        metadata_version=settings.SUBSTRATE_METADATA_VERSION
                     )
 
                 storage_call = RuntimeStorage.query(self.session).filter_by(
@@ -827,7 +834,7 @@ class AccountDetailResource(JSONAPIDetailResource):
                         params=item.id,
                         return_scale_type=storage_call.type_value,
                         hasher=storage_call.type_hasher,
-                        metadata_version=SUBSTRATE_METADATA_VERSION
+                        metadata_version=settings.SUBSTRATE_METADATA_VERSION
                     )
 
         return data

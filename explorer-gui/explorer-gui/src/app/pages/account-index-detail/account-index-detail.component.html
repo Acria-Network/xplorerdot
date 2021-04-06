@@ -18,25 +18,11 @@
                               <tr>
                                 <td>{{ 'AccountIndexDetail.Account' | translate }}</td>
                                 <td *ngIf="!accountIndex.attributes.address">{{ 'AccountIndexDetail.N/A' | translate }}</td>
-                                <td *ngIf="accountIndex.attributes.account"><a routerLink="{{ networkURLPrefix }}/account/{{ accountIndex.attributes.account?.attributes.address }}"><app-address [account]="accountIndex.attributes?.account"></app-address></a></td>
+                                <td *ngIf="accountIndex.attributes.address"><a routerLink="{{ networkURLPrefix }}/account/{{ accountIndex.attributes.account?.attributes.address }}"><app-address [account]="accountIndex.attributes?.account"></app-address></a></td>
                               </tr>
                               <tr>
-                                <td>{{ 'AccountIndexDetail.Is reclaimable' | translate }}</td>
-                                <td>
-                                  <i *ngIf="accountIndex.attributes.is_reclaimable" class="fa fa-check" style="color: forestgreen"></i>
-                                  <i *ngIf="!accountIndex.attributes.is_reclaimable" class="fa fa-times" style="color: darkred"></i>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>{{ 'AccountIndexDetail.Is reclaimed' | translate }}</td>
-                                <td>
-                                  <i *ngIf="accountIndex.attributes.is_reclaimed" class="fa fa-check" style="color: forestgreen"></i>
-                                  <i *ngIf="!accountIndex.attributes.is_reclaimed" class="fa fa-times" style="color: darkred"></i>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td width="20%">{{ 'AccountIndexDetail.Created at block' | translate }}</td>
-                                <td><a routerLink="{{ networkURLPrefix }}/block/{{ accountIndex.attributes.created_at_block }}">{{ accountIndex.attributes.created_at_block }}</a></td>
+                                <td>{{ 'AccountIndexList.ID' | translate }}</td>
+                                <td>{{ accountIndex.attributes.id }}</td>
                               </tr>
                               <tr>
                                 <td width="20%">{{ 'AccountIndexDetail.Updated at block' | translate }}</td>

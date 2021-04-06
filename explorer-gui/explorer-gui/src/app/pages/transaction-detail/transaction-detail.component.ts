@@ -44,6 +44,7 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
   public networkTokenSymbol: string;
   public resourceNotFound: boolean;
   public transactionHash: string;
+  public countDown: number;
 
   constructor(
     private route: ActivatedRoute,
@@ -53,6 +54,7 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    this.countDown = 6;
 
     this.networkSubscription = this.appConfigService.getCurrentNetwork().subscribe( network => {
       this.networkURLPrefix = this.appConfigService.getUrlPrefix();
@@ -72,9 +74,22 @@ export class TransactionDetailComponent implements OnInit, OnDestroy {
       this.extrinsic$.subscribe(res => {}, error => {
         if (error.status === 404) {
           this.resourceNotFound = true;
+
+          this.processCountDown();
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 6000);
         }
       });
     });
+  }
+
+  processCountDown() {
+    setTimeout(() => {
+      this.countDown--;
+      this.processCountDown();
+    }, 1000);
   }
 
   ngOnDestroy() {

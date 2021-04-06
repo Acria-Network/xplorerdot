@@ -21,9 +21,9 @@
                               <tr>
                                 <th></th>
                                 <th>{{ 'AccountIndexList.Short Address' | translate }}</th>
+                                <th>{{ 'AccountIndexList.ID' | translate }}</th>
                                 <th>{{ 'AccountIndexList.Address' | translate }}</th>
-                                <th class="is-hidden-mobile">{{ 'AccountIndexList.Created at block' | translate }}</th>
-                                <th>{{ 'AccountIndexList.Reclaimable' | translate }}</th>
+                                <th class="is-hidden-mobile">{{ 'AccountIndexDetail.Updated at block' | translate }}</th>
                                 <th></th>
                               </tr>
                             </thead>
@@ -33,13 +33,10 @@
                                       <i class="fa fa-id-card-alt"></i>
                                     </td>
                                     <td><a routerLink="{{ networkURLPrefix }}/indices/account/{{ accountIndex.id }}">{{ accountIndex.attributes.short_address }}</a></td>
+                                    <td>{{ accountIndex.attributes.id }}</td>
                                     <td *ngIf="!accountIndex.attributes.address">-</td>
                                     <td *ngIf="accountIndex.attributes.address"><a routerLink="{{ networkURLPrefix }}/account/{{ accountIndex.attributes.address }}" class="address-mobile-format"><app-identicon [accountId]="accountIndex.attributes.account_id"></app-identicon> {{ accountIndex.attributes.address }}</a></td>
-                                    <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/block/{{ accountIndex.attributes.created_at_block }}">{{ accountIndex.attributes.created_at_block }}</a></td>
-                                    <td>
-                                      <i *ngIf="accountIndex.attributes.is_reclaimable" class="fa fa-check" style="color: forestgreen"></i>
-                                      <i *ngIf="!accountIndex.attributes.is_reclaimable" class="fa fa-times" style="color: darkred"></i>
-                                    </td>
+                                    <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/block/{{ accountIndex.attributes.updated_at_block }}">{{ accountIndex.attributes.updated_at_block }}</a></td>
                                     <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/indices/account/{{ accountIndex.id }}">{{ 'AccountIndexList.Details' | translate }}</a></td>
                                 </tr>
                             </tbody>

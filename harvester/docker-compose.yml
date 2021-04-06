@@ -64,7 +64,7 @@ services:
       - MYSQL_DATABASE=polkascan
 
   substrate-node:
-    image: polkasource/substrate-alexander:latest
+    image: polkasource/substrate-client:kusama-latest
     ports:
       - '30333:30333'
       - '9933:9933'

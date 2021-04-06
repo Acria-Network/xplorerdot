@@ -1,5 +1,6 @@
 <ng-container [ngSwitch]="item.type">
   <div *ngSwitchCase="'Address'"><a routerLink="{{ networkURLPrefix }}/account/{{ item.value }}" class="address-mobile-format"><app-identicon [accountId]="item.orig_value"></app-identicon> {{ item.value }}</a></div>
+  <div *ngSwitchCase="'LookupSource'"><a routerLink="{{ networkURLPrefix }}/account/{{ item.value }}" class="address-mobile-format"><app-identicon [accountId]="item.orig_value"></app-identicon> {{ item.value }}</a></div>
   <div *ngSwitchCase="'AuthorityId'"><a routerLink="{{ networkURLPrefix }}/account/{{ item.value }}" class="address-mobile-format"><app-identicon [accountId]="item.orig_value"></app-identicon> {{ item.value }}</a></div>
   <div *ngSwitchCase="'<Lookup as StaticLookup>::Source'"><a routerLink="{{ networkURLPrefix }}/account/{{ item.value }}" class="address-mobile-format"><app-identicon [accountId]="item.orig_value"></app-identicon> {{ item.value }}</a></div>
   <div *ngSwitchCase="'AccountId'"><a routerLink="{{ networkURLPrefix }}/account/{{ item.value }}" class="address-mobile-format"><app-identicon [accountId]="item.orig_value"></app-identicon> {{ item.value }}</a></div>
@@ -9,7 +10,10 @@
   <div *ngSwitchCase="'SessionIndex'"><a routerLink="{{ networkURLPrefix }}/session/session/{{ item.value }}">Session #{{ item.value }}</a></div>
   <div *ngSwitchCase="'BlockNumber'"><a routerLink="{{ networkURLPrefix }}/block/{{ item.value }}">Block #{{ item.value }}</a></div>
   <div *ngSwitchCase="'AccountIndex'"><a routerLink="{{ networkURLPrefix }}/indices/account/{{ item.value }}">Account index {{ item.value }}</a></div>
-  <div *ngSwitchCase="'EthereumAddress'"><a href="https://etherscan.io/address/0x{{ item.value }}" target="_blank">Ethereum Address: 0x{{ item.value }}</a></div>
+  <div *ngSwitchCase="'EthereumAddress'">
+    <a *ngIf="!item.value.includes('0x')" href="https://etherscan.io/address/0x{{ item.value }}" target="_blank">Ethereum Address: 0x{{ item.value }}</a>
+    <a *ngIf="item.value.includes('0x')" href="https://etherscan.io/address/{{ item.value }}" target="_blank">Ethereum Address:  {{ item.value }}</a>
+  </div>
   <div *ngSwitchCase="'Balance'">{{ formatBalance(item.value) | number:'1.0-15'}} {{ networkTokenSymbol }}</div>
   <div *ngSwitchCase="'Compact<Balance>'">{{ formatBalance(item.value) | number:'1.0-15'}} {{ networkTokenSymbol }}</div>
   <div *ngSwitchCase="'Compact<BalanceOf>'">{{ formatBalance(item.value) | number:'1.0-15'}} {{ networkTokenSymbol }}</div>

@@ -52,7 +52,7 @@ export class AnalyticsChartDetailComponent implements OnInit, OnDestroy {
     this.networkSubscription = this.appConfigService.getCurrentNetwork().subscribe( network => {
 
       this.networkURLPrefix = this.appConfigService.getUrlPrefix();
-      this.networkColor = '#' + network.attributes.color_code;
+      this.networkColor = '#3498db';
 
       this.chart$ = this.activatedRoute.paramMap.pipe(
         switchMap((params: ParamMap) => {

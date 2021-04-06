@@ -35,7 +35,7 @@ from app.resources import polkascan
 
 
 # Database connection
-engine = create_engine(DB_CONNECTION, echo=DEBUG, isolation_level="READ_UNCOMMITTED")
+engine = create_engine(DB_CONNECTION, echo=DEBUG, isolation_level="READ_UNCOMMITTED", pool_pre_ping=True)
 session_factory = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 # Define cache region

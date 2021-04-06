@@ -1,7 +1,7 @@
 <div class="columns">
     <div class="column is-12">
         <app-polkascan-header></app-polkascan-header>
-        <section class="is-12" id="search">
+        <section class="is-12" id="search" style="width:100%;">
             <div class="card">
                 <header class="card-header">
                     <p class="card-header-title">{{ 'Analytics-Search.Search' | translate }}</p>
@@ -13,17 +13,20 @@
                 </header>
                 <div class="card-content">
                     <div class="content">
-                        <form (ngSubmit)="search()">
-                        <div class="control has-icons-left has-icons-right">
+                        <form (ngSubmit)="search()" style="display:flex;">
+                        <div class="control has-icons-left has-icons-right" style="width:100%;">
                             <input class="input is-large is-loading" type="text" [(ngModel)]="searchQuery" [ngModelOptions]="{standalone: true}" [placeholder]="'PlaceHolderSearch' | translate">
                             <span class="icon is-medium is-left">
-                              <i *ngIf="loadingCount === 0" class="fa fa-search"></i>
-                              <i *ngIf="loadingCount > 0" class="fas fa-spinner fa-spin"></i>
+                              <!-- <i *ngIf="loadingCount === 0" class="fa fa-search"></i>
+                              <i *ngIf="loadingCount > 0" class="fas fa-spinner fa-spin"></i> -->
                             </span>
                             <span class="icon is-medium is-right">
 
                             </span>
                         </div>
+                        <button (click)="search()" type="submit" class="button is-primary icon is-medium is-right">
+                          <i class="fa fa-search"></i>
+                        </button>
                       </form>
                     </div>
                 </div>

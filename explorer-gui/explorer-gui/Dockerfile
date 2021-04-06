@@ -15,7 +15,7 @@ COPY . /ng-app/
 RUN ls /ng-app/src/
 
 ## Build the angular app in production mode and store the artifacts in dist folder
-ARG DISCOVERY_API_URL=https://discovery.polkascan.io
+ARG DISCOVERY_API_URL=https://discovery-32.polkascan.io
 ENV DISCOVERY_API_URL=$DISCOVERY_API_URL
 
 ARG API_URL=https://host-01.polkascan.io/kusama/api/v1

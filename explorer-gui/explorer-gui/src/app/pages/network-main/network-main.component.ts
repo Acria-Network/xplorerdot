@@ -73,9 +73,11 @@ export class NetworkMainComponent implements OnInit, OnDestroy {
 
           let networkFound = false;
 
-          for (const network of networks.data) {
+          for (let network of networks.data) {
 
             if (this.route.snapshot.paramMap.get('network') === network.attributes.network_id) {
+              network.attributes.api_url_root = 'http://192.248.177.240:8080/api/v1/' + network.attributes.network_id;
+              console.log(network.attributes);
               this.appConfigService.setNetwork(network);
               networkFound = true;
             }

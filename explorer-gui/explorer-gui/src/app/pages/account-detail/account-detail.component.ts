@@ -52,6 +52,7 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
   public extrinsics: DocumentCollection<Extrinsic>;
 
   public slashes: DocumentCollection<Event>;
+  public rewards: DocumentCollection<Event>;
   public councilActivity: DocumentCollection<Event>;
   public memberActivity: DocumentCollection<Extrinsic>;
   public electionActivity: DocumentCollection<Event>;
@@ -69,6 +70,7 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
   public balanceTransfersPage = 1;
   public extrinsicsPage = 1;
   public slashesPage = 1;
+  public rewardsPage = 1;
   public councilActivityPage = 1;
   public electionActivityPage = 1;
   public memberActivityPage = 1;
@@ -120,7 +122,7 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
 
     this.fragmentSubsription = this.activatedRoute.fragment.subscribe(value => {
       if ([
-        'roles', 'transactions', 'slashes', 'transfers', 'council', 'election', 'member', 'techcomm', 'balance-history',
+        'roles', 'transactions', 'slashes', 'transfers', 'rewards', 'council', 'election', 'member', 'techcomm', 'balance-history',
         'bonding', 'imonline', 'identity', 'authoredblocks', 'lifecycle', 'treasury', 'proposals', 'referenda',
         'sessions'
       ].includes(value)) {
@@ -207,6 +209,7 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
 
           // reset tabs
           this.slashes = null;
+          this.rewards = null;
           this.councilActivity = null;
           this.memberActivity = null;
           this.electionActivity = null;
@@ -248,6 +251,8 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
             if (val.attributes.was_validator || val.attributes.was_nominator) {
 
               // Validator & Nominator tabs
+              this.rewardsPage = +queryParams.rewardsPage || 1;
+              this.getRewardsEvents(this.rewardsPage);
               this.slashesPage = +queryParams.slashesPage || 1;
               this.getSlashEvents(this.slashesPage);
               this.stakingBondActivityPage = +queryParams.stakingBondActivityPage || 1;
@@ -313,6 +318,15 @@ export class AccountDetailComponent implements OnInit, OnDestroy {
       remotefilter: {address: this.accountId},
       page: {number: page}
     }).subscribe(balanceTransfers => (this.balanceTransfers = balanceTransfers));
+  }
+
+  public getRewardsEvents(page: number) {
+     this.eventService.all({
+        page: {number: page, size: 25},
+        remotefilter: {address: this.accountId, search_index: '39'},
+      }).subscribe(events => {
+        this.rewards = events;
+      });
   }
 
   public getSlashEvents(page: number) {

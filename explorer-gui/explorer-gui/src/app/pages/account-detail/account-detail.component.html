@@ -18,6 +18,14 @@
         </div>
       </div>
       <div *ngIf="!account.is_loading && !resourceNotFound">
+
+        <article class="message is-warning" *ngIf="networkTokenSymbol == 'New DOT'">
+          <div class="message-body">
+            <p>At block number 1,248,328 the DOT token underwent a redenomination from its original sale.</p>
+            <p>New DOT are 100x smaller than DOT (old). Therefore, your DOT balance is 100x higher and the price per DOT is 100x lower. The percentage of the DOT you own relative to total supply is unchanged. This does not affect the total value of your position.</p><p>See the <a href="https://polkadot.network/the-results-are-in/" rel="noopener noreferrer" target="_blank">Polkadot blog post</a> for more information.</p>
+          </div>
+        </article>
+
         <section class="info-tiles">
           <div class="card events-card">
               <header class="card-header">
@@ -152,6 +160,18 @@
                       <span>{{ 'AccountDetail.Last 25 balance transfers' | translate }}</span>
                     </a>
                   </li>
+                  <li [ngClass]="{'is-active': currentTab == 'rewards'}" *ngIf="rewards?.data.length > 0">
+                    <a routerLink="." fragment="rewards">
+                      <span class="icon is-small"><i class="fas fa-hand-holding-usd" aria-hidden="true"></i></span>
+                      <span>{{ 'AccountDetail.Last 25 staking rewards' | translate }}</span>
+                    </a>
+                  </li>
+                  <li [ngClass]="{'is-active': currentTab == 'slashes'}" *ngIf="slashes?.data.length > 0">
+                    <a routerLink="." fragment="slashes">
+                      <span class="icon is-small"><i class="fas fa-user-alt-slash" aria-hidden="true"></i></span>
+                      <span>{{ 'AccountDetail.Last 25 slash events' | translate }}</span>
+                    </a>
+                  </li>
                   <li [ngClass]="{'is-active': currentTab == 'identity'}" *ngIf="identityActivity?.data.length > 0">
                     <a routerLink="." fragment="identity">
                       <span class="icon is-small"><i class="fas fa-id-card" aria-hidden="true"></i></span>
@@ -168,12 +188,6 @@
                     <a routerLink="." fragment="referenda">
                       <span class="icon is-small"><i class="fas fa-person-booth" aria-hidden="true"></i></span>
                       <span>{{ 'AccountDetail.Referenda activity' | translate }}</span>
-                    </a>
-                  </li>
-                  <li [ngClass]="{'is-active': currentTab == 'slashes'}" *ngIf="slashes?.data.length > 0">
-                    <a routerLink="." fragment="slashes">
-                      <span class="icon is-small"><i class="fas fa-user-alt-slash" aria-hidden="true"></i></span>
-                      <span>{{ 'AccountDetail.Last 25 slash events' | translate }}</span>
                     </a>
                   </li>
                   <li [ngClass]="{'is-active': currentTab == 'bonding'}" *ngIf="stakingBondActivity?.data.length > 0">
@@ -265,17 +279,32 @@
                           </thead>
                           <tbody>
                               <tr *ngFor="let balanceTransfer of balanceTransfers.data; trackBy: balanceTransfers.trackBy">
-
                                 <td width="5%"><i class="fa fa-exchange-alt"></i></td>
                                 <td class="is-hidden-mobile"><a [routerLink]="[networkURLPrefix, 'block', balanceTransfer.attributes.block_id]">{{ balanceTransfer.attributes.block_id }}</a></td>
-                                <td *ngIf="balanceTransfer.attributes?.event_id == 'Transfer' && account.id != balanceTransfer.attributes?.sender?.id"><a *ngIf="balanceTransfer.attributes.sender" [routerLink]="[networkURLPrefix, 'account', balanceTransfer.attributes.sender?.attributes?.address]" class="address-mobile-format"><app-address [account]="balanceTransfer.attributes.sender"></app-address></a></td>
-                                <td *ngIf="balanceTransfer.attributes?.event_id == 'Claimed'"><div class="transfer-source">{{ 'AccountDetail.Claim' | translate }}</div></td>
-                                <td *ngIf="balanceTransfer.attributes?.event_id == 'Deposit'"><div class="transfer-source">{{ 'AccountDetail.Deposit' | translate }}</div></td>
-                                <td *ngIf="account.id == balanceTransfer.attributes.sender?.id" class="current-account"><span class="address-mobile-format"><app-address [account]="balanceTransfer.attributes.sender"></app-address></span></td>
-                                <td *ngIf="account.id == balanceTransfer.attributes.sender?.id" class="transfer-out"><i class="fa fa-sign-out-alt" title="Outgoing transfer"></i></td>
-                                <td *ngIf="account.id == balanceTransfer.attributes.destination?.id" class="transfer-in"><i class="fa fa-sign-in-alt" title="Incoming transfer"></i></td>
-                                <td *ngIf="account.id != balanceTransfer.attributes.destination?.id"><a [routerLink]="[networkURLPrefix, 'account', balanceTransfer.attributes.destination.attributes?.address]" class="address-mobile-format"><app-address [account]="balanceTransfer.attributes.destination"></app-address></a></td>
-                                <td *ngIf="account.id == balanceTransfer.attributes.destination?.id" class="current-account"><span class="address-mobile-format"><app-address [account]="balanceTransfer.attributes.destination"></app-address></span></td>
+                                <ng-container *ngIf="balanceTransfer.attributes?.event_id == 'Transfer'">
+                                  <td *ngIf="account.id != balanceTransfer.attributes?.sender?.id"><a *ngIf="balanceTransfer.attributes.sender" [routerLink]="[networkURLPrefix, 'account', balanceTransfer.attributes.sender?.attributes?.address]" class="address-mobile-format"><app-address [account]="balanceTransfer.attributes.sender"></app-address></a></td>
+                                  <td *ngIf="account.id == balanceTransfer.attributes.sender?.id" class="current-account"><span class="address-mobile-format"><app-address [account]="balanceTransfer.attributes.sender"></app-address></span></td>
+                                  <td *ngIf="account.id == balanceTransfer.attributes.sender?.id" class="transfer-out"><i class="fa fa-sign-out-alt" title="Outgoing transfer"></i></td>
+                                  <td *ngIf="account.id == balanceTransfer.attributes.destination?.id" class="transfer-in"><i class="fa fa-sign-in-alt" title="Incoming transfer"></i></td>
+                                  <td *ngIf="account.id != balanceTransfer.attributes.destination?.id"><a [routerLink]="[networkURLPrefix, 'account', balanceTransfer.attributes.destination.attributes?.address]" class="address-mobile-format"><app-address [account]="balanceTransfer.attributes.destination"></app-address></a></td>
+                                  <td *ngIf="account.id == balanceTransfer.attributes.destination?.id" class="current-account"><span class="address-mobile-format"><app-address [account]="balanceTransfer.attributes.destination"></app-address></span></td>
+                                </ng-container>
+                                <ng-container *ngIf="balanceTransfer.attributes?.event_id == 'Claimed'">
+                                  <td><div class="transfer-source">{{ 'AccountDetail.Claim' | translate }}</div></td>
+                                  <td class="transfer-in"><i class="fa fa-sign-in-alt" title="Incoming transfer"></i></td>
+                                  <td class="current-account"><span class="address-mobile-format"><app-address [account]="account"></app-address></span></td>
+                                </ng-container>
+                                <ng-container *ngIf="balanceTransfer.attributes?.event_id == 'Deposit'">
+                                  <td><div class="transfer-source">{{ 'AccountDetail.Deposit' | translate }}</div></td>
+                                  <td class="transfer-in"><i class="fa fa-sign-in-alt" title="Incoming transfer"></i></td>
+                                  <td class="current-account"><span class="address-mobile-format"><app-address [account]="account"></app-address></span></td>
+                                </ng-container>
+                                <ng-container *ngIf="balanceTransfer.attributes?.event_id == 'Reward'">
+                                  <td><div class="transfer-source">{{ 'AccountDetail.Staking reward' | translate }}</div></td>
+                                  <td class="transfer-in"><i class="fa fa-sign-in-alt" title="Incoming transfer"></i></td>
+                                  <td class="current-account"><span class="address-mobile-format"><app-address [account]="account"></app-address></span></td>
+                                </ng-container>
+
                                 <td>{{ formatBalance(balanceTransfer.attributes.value) | number:'1.0-15' }} {{ networkTokenSymbol }}</td>
                                 <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/event/{{ balanceTransfer.id }}">Details</a></td>
                               </tr>
@@ -420,6 +449,34 @@
                       <a class="card-footer-item" routerLink="." [queryParams]="{ referendumActivityPage: referendumActivityPage + 1}" [fragment]="currentTab">{{ 'AccountDetail.View next' | translate }}</a>
                   </footer>
               </div>
+              <div class="card-table" id="rewards" *ngIf="currentTab == 'rewards'">
+                  <div class="content">
+                      <app-loading-box *ngIf="!rewards || rewards.is_loading"></app-loading-box>
+                      <table class="table is-fullwidth is-striped" *ngIf="rewards && rewards.data.length > 0">
+                           <thead>
+                            <tr>
+                              <th></th>
+                              <th class="is-hidden-mobile">{{ 'AccountDetail.Block' | translate }}</th>
+                              <th>{{ 'AccountDetail.Amount' | translate }}</th>
+                              <th></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                              <tr *ngFor="let reward of rewards.data; trackBy: rewards.trackBy">
+                                  <td width="5%">
+                                    <i class="fa fa-hand-holding-usd"></i>
+                                  </td>
+                                  <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/block/{{ reward.attributes.block_id }}">{{ reward.attributes.block_id }}</a></td>
+                                  <td>{{ formatBalance(reward.attributes.attributes[1].value) | number:'1.0-15' }} {{ networkTokenSymbol }}</td>
+                                  <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/event/{{ reward.id }}">{{ 'AccountDetail.Details' | translate }}</a></td>
+                              </tr>
+                          </tbody>
+                      </table>
+                  </div>
+                  <footer class="card-footer" *ngIf="rewards?.data.length == 25">
+                      <a class="card-footer-item" routerLink="." [queryParams]="{ rewardsPage: rewardsPage + 1}" [fragment]="currentTab">{{ 'AccountDetail.View next' | translate }}</a>
+                  </footer>
+              </div>
               <div class="card-table" id="slashes" *ngIf="currentTab == 'slashes'">
                   <div class="content">
                       <app-loading-box *ngIf="!slashes || slashes.is_loading"></app-loading-box>
@@ -474,6 +531,7 @@
                                   <td *ngIf="item.attributes.call_id == 'validate'">{{ 'AccountDetail.Started validating' | translate }}</td>
                                   <td *ngIf="item.attributes.call_id == 'nominate'">{{ 'AccountDetail.Nominated { amount } validators' | translate:{'amount': item.attributes.params[0].value.length} }}</td>
                                   <td *ngIf="item.attributes.call_id == 'set_payee'">{{ 'AccountDetail.Changed payee to' | translate }} {{item.attributes.params[0].value}}</td>
+                                  <td *ngIf="item.attributes.call_id == 'batch'">{{ 'AccountDetail.Multiple actions' | translate }}</td>
                                   <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/transaction/{{ item.id }}">{{ 'AccountDetail.Details' | translate }}</a></td>
                               </tr>
                           </tbody>

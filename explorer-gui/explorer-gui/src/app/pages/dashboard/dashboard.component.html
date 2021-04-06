@@ -1,63 +1,79 @@
 <div class="columns">
-    <div class="column is-12">
-        <app-polkascan-header></app-polkascan-header>
-        <section class="is-12" id="search">
-            <div class="card">
-                <div class="card-content">
+    <div class="column is-12" style="padding:0px; position:relative; max-width: 100%;">
+      <nav class="navbar is-black" id="search_box_content">
+        <div class="container">
+          <section class="is-12" id="search">
+            <h1 style="font-weight: 400;font-size: 1.7125rem;margin-bottom:10px;">The AcriaScan Explorer</h1>
+            <div class="card" style="border-radius: 5px !important; margin-bottom: 1rem;">
+                <div>
                     <div class="content">
-                        <form (ngSubmit)="search()">
-                        <div class="control has-icons-left has-icons-right">
+                        <form (ngSubmit)="search()" style="display:flex;">
+                        <!-- <div class="control has-icons-right"> -->
                             <input class="input is-large" type="text" [(ngModel)]="blockSearchText" [ngModelOptions]="{standalone: true}" [placeholder]="'PlaceHolderSearch' | translate">
-                            <span class="icon is-medium is-left">
-                              <i class="fa fa-search"></i>
-                            </span>
-                            <span class="icon is-medium is-right">
-                              <i *ngIf="blockSearchText" class="fa fa-check"></i>
-                            </span>
-                        </div>
+                        <!-- </div> -->
+                        <button (click)="search()" type="submit" class="button is-primary icon is-medium is-right">
+                          <i class="fa fa-search"></i>
+                        </button>
                       </form>
                     </div>
                 </div>
             </div>
-        </section>
-
-        <section class="info-tiles is-hidden-mobile">
-            <div class="tile is-ancestor has-text-centered">
-                <div class="tile is-parent is-2-mobile">
-                    <article class="tile is-child box">
+            <p style="font-size:1rem;color:#8F99A3;">AcriaScan offers <b style="color:#3498db;">real-time</b> multi-chain data. It makes <b style="color:#3498db;">blockchain</b> data accessible and understandable.</p>
+          </section>
+          <section class="info-tiles" id="search_section">
+            <div class="tile is-ancestor has-text-centered" id="analytics_dashboard">
+              <div class="column is-4">
+                <div>
+                  <div class="tile is-parent is-2-mobile">
+                    <article class="tile is-child box" style="border-top-left-radius:10px;">
                       <a routerLink="{{ networkURLPrefix }}/block/">
-                        <div>
-                        <span class="icon">
-                            <i class="fa fa-cube fa-2x"></i>
-                        </span>
-                        <p class="title" *ngIf="networkstats$ | async as networkstats">{{ networkstats.attributes.best_block| number: '1.'}}</p>
-                        <p class="subtitle">{{ 'DashBoard.Finalized Block' | translate }}</p>
+                        <div class="inline">
+                          <div class="vertical_center">
+                            <span class="icon">
+                              <i class="fi fi-rr-copy-alt"></i>
+                            </span>
                           </div>
-                      </a>
-                    </article>
-                </div>
-                <div class="tile is-parent is-2-mobile">
-                    <article class="tile is-child box">
-                      <a routerLink="{{ networkURLPrefix }}/extrinsic">
-                        <div>
-                          <span class="icon">
-                              <i class="fa fa-file-signature fa-2x"></i>
-                          </span>
-                          <p *ngIf="networkstats$ | async as networkstats" class="title">{{ networkstats.attributes.total_signed_extrinsics | number: '1.'}}</p>
-                          <p class="subtitle">{{ 'DashBoard.Transactions' | translate }}</p>
+                          <div class="leftmargin15">
+                            <p class="subtitle">{{ 'DashBoard.Finalized Block' | translate }}</p>
+                            <p class="title" *ngIf="networkstats$ | async as networkstats">{{ networkstats.attributes.best_block| number: '1.'}}</p>
+                          </div>
                         </div>
                       </a>
                     </article>
+                  </div>
+                  <div class="tile is-parent is-2-mobile">
+                      <article class="tile is-child box" style="border-bottom-left-radius:10px;">
+                        <a routerLink="{{ networkURLPrefix }}/extrinsic">
+                          <div class="inline">
+                            <div class="vertical_center">
+                              <span class="icon">
+                                <i class="fi fi-rr-edit-alt"></i>
+                              </span>
+                            </div>
+                            <div class="leftmargin15">
+                              <p class="subtitle">{{ 'DashBoard.Transactions' | translate }}</p>
+                              <p *ngIf="networkstats$ | async as networkstats" class="title">{{ networkstats.attributes.total_signed_extrinsics | number: '1.'}}</p>
+                            </div>
+                          </div>
+                        </a>
+                      </article>
+                  </div>
                 </div>
+              </div>
+              <div class="column is-4">
                 <div class="tile is-parent is-2-mobile">
                     <article class="tile is-child box">
                       <a routerLink="{{ networkURLPrefix }}/event">
-                        <div>
-                          <span class="icon">
-                              <i class="fa fa-calendar-check fa-2x"></i>
-                          </span>
-                          <p class="title" *ngIf="networkstats$ | async as networkstats">{{ networkstats.attributes.total_events_module | number: '1.'}}</p>
-                          <p class="subtitle">{{ 'DashBoard.Module Events' | translate }}</p>
+                        <div class="inline">
+                          <div class="vertical_center">
+                            <span class="icon">
+                              <i class="fi fi-rr-calendar"></i>
+                            </span>
+                          </div>
+                          <div class="leftmargin15">
+                            <p class="subtitle">{{ 'DashBoard.Module Events' | translate }}</p>
+                            <p class="title" *ngIf="networkstats$ | async as networkstats">{{ networkstats.attributes.total_events_module | number: '1.'}}</p>
+                          </div>
                         </div>
                       </a>
                     </article>
@@ -65,160 +81,224 @@
                 <div class="tile is-parent is-2-mobile">
                     <article class="tile is-child box">
                       <a routerLink="{{ networkURLPrefix }}/account">
-                        <div>
-                          <span class="icon">
-                              <i class="fa fa-id-card fa-2x"></i>
-                          </span>
-                          <p *ngIf="networkstats$ | async as networkstats" class="title">{{ networkstats.attributes.total_accounts }}</p>
-                          <p class="subtitle">{{ 'DashBoard.Active Accounts' | translate }}</p>
+                        <div class="inline">
+                          <div class="vertical_center">
+                            <span class="icon">
+                              <i class="fi fi-rr-id-badge"></i>
+                            </span>
+                          </div>
+                          <div class="leftmargin15">
+                            <p class="subtitle">{{ 'DashBoard.Active Accounts' | translate }}</p>
+                            <p *ngIf="networkstats$ | async as networkstats" class="title">{{ networkstats.attributes.total_accounts }}</p>
+                          </div>
                         </div>
                       </a>
                     </article>
                 </div>
-                <div class="tile is-parent is-2-mobile">
-                    <article class="tile is-child box">
-                      <a routerLink="{{ networkURLPrefix }}/runtime">
-                        <div>
-                          <span class="icon">
-                              <i class="fa fa-cogs fa-2x"></i>
-                          </span>
-                          <p *ngIf="networkstats$ | async as networkstats" class="title">{{ networkstats.attributes.total_runtimes }}</p>
-                          <p class="subtitle">{{ 'DashBoard.Runtime Versions' | translate }}</p>
+              </div>
+                <!-- <div class="tile is-parent is-2-mobile"  style="width:30%;">
+                    <article class="tile is-child box vertical_center" style="border-top-right-radius:10px;border-bottom-right-radius:10px;">
+                      <a routerLink="{{ networkURLPrefix }}/runtime" style="margin:0 auto;">
+                        <div class="inline">
+                          <div class="vertical_center">
+                            <span class="icon">
+                              <i class="fi fi-rr-settings"></i>
+                            </span>
+                          </div>
+                          <div class="leftmargin15">
+                            <p class="subtitle">{{ 'DashBoard.Runtime Versions' | translate }}</p>
+                            <p *ngIf="networkstats$ | async as networkstats" class="title">{{ networkstats.attributes.total_runtimes }}</p>
+                          </div>
                         </div>
                       </a>
                     </article>
+                </div> -->
+                <div class="tile is-parent column is-4 chart_responsive" *ngIf="totalTransactionsDaychart$ | async as chart">
+                  <article class="tile is-child box" style="padding: 0px;border-top-right-radius:10px;border-bottom-right-radius:10px;">
+                    <app-loading-box *ngIf="chart.is_loading"></app-loading-box>
+                    <app-chart *ngIf="!chart.is_loading"
+                          [chartData]="chart"
+                          [title]="'Analytics-Charts.Total transactions by day' | translate"
+                          height="200px"
+                          [themeColor] = 'networkColor'
+                          xAxisType="datetime"
+                    >
+                    </app-chart>
+                  </article>
                 </div>
             </div>
-        </section>
+          </section>
+        </div>
+      </nav>
 
-        <section class="columns">
-            <div class="column is-6 last-blocks" id="last-blocks">
+      
+
+        <app-polkascan-header></app-polkascan-header>
+
+        <article class="message is-warning" *ngIf="networkTokenSymbol == 'New DOT'">
+          <div class="message-body">
+            <p>At block number 1,248,328 the DOT token underwent a redenomination from its original sale.</p>
+            <p>New DOT are 100x smaller than DOT (old). Therefore, your DOT balance is 100x higher and the price per DOT is 100x lower. The percentage of the DOT you own relative to total supply is unchanged. This does not affect the total value of your position.</p><p>See the <a href="https://polkadot.network/the-results-are-in/" rel="noopener noreferrer" target="_blank">Polkadot blog post</a> for more information.</p>
+          </div>
+        </article>
+
+
+        <div class="container" id="dashboard_main_section">
+
+          <section class="columns">
+              <div class="column is-6 last-blocks" id="last-blocks">
+                  <div class="card dashboard-card">
+                    <a routerLink="{{ networkURLPrefix }}/block">
+                      <header class="card-header" style="border-bottom: 1px solid #dbdbdb;">
+                          <p class="card-header-title">
+                              {{ 'DashBoard.Last blocks' | translate }}
+                          </p>
+                          <a [routerLink]="" fragment="last-blocks" class="card-header-icon" aria-label="more options">
+                            <!-- <span class="icon">
+                              <i class="fa fa-cube" aria-hidden="true"></i>
+                            </span> -->
+                          </a>
+                      </header>
+                    </a>
+                      <div class="card-table">
+                          <div class="content">
+                              <table class="table is-fullwidth is-striped">
+                                  <thead>
+                                    <!-- <tr>
+                                      <th></th>
+                                      <th>{{ 'DashBoard.Number' | translate }}</th>
+                                      <th class="is-hidden-mobile">{{ 'DashBoard.Age' | translate }}</th>
+                                      <th>{{ 'DashBoard.Transactions' | translate }}</th>
+                                      <th>{{ 'DashBoard.Module Events' | translate }}</th>
+                                      <th></th>
+                                    </tr> -->
+                                  </thead>
+                                  <tbody *ngIf="blocks">
+                                      <tr *ngFor="let block of blocks.data; trackBy: blocks.trackBy">
+                                          <td width="10%">
+                                            <!-- <i class="fa fa-cube"></i> -->
+                                            <div class="block_table">
+                                                <span>Bk</span>
+                                            </div>
+                                          </td>
+                                          <td width="40%">
+                                            <a routerLink="{{ networkURLPrefix }}/block/{{ block.id }}">{{ block.id }}</a><br>
+                                            <span *ngIf="block.attributes.datetime" rel="tooltip" title="{{ block.attributes.datetime | date:'medium'}}">{{ block.attributes.datetime | timeago }}</span>
+                                          </td>
+                                          <!-- <td class="is-hidden-mobile"><span *ngIf="block.attributes.datetime" rel="tooltip" title="{{ block.attributes.datetime | date:'medium'}}">{{ block.attributes.datetime | timeago }}</span></td> -->
+                                          <td>
+                                            <span>Transactions</span>&nbsp;<a>{{ block.attributes.count_extrinsics_signed }}</a><br>
+                                            <a>{{ block.attributes.count_events_module }}</a>&nbsp;<span>Moudle Events</span>
+                                          </td>
+                                          <!-- <td>{{ block.attributes.count_events_module }}</td> -->
+                                          <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/block/{{ block.id }}">{{ 'DashBoard.Details' | translate }}</a></td>
+                                      </tr>
+                                  </tbody>
+                              </table>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="column is-6 last-transfers" id="last-transfers">
                 <div class="card dashboard-card">
-                  <a routerLink="{{ networkURLPrefix }}/block">
-                    <header class="card-header">
-                        <p class="card-header-title">
-                            {{ 'DashBoard.Last blocks' | translate }}
-                        </p>
-                        <a [routerLink]="" fragment="last-blocks" class="card-header-icon" aria-label="more options">
-                          <span class="icon">
-                            <i class="fa fa-cube" aria-hidden="true"></i>
-                          </span>
-                        </a>
-                    </header>
-                  </a>
-                    <div class="card-table">
-                        <div class="content">
-                            <table class="table is-fullwidth is-striped">
-                                <thead>
-                                  <tr>
-                                    <th></th>
-                                    <th>{{ 'DashBoard.Number' | translate }}</th>
-                                    <th class="is-hidden-mobile">{{ 'DashBoard.Age' | translate }}</th>
-                                    <th>{{ 'DashBoard.Transactions' | translate }}</th>
-                                    <th>{{ 'DashBoard.Module Events' | translate }}</th>
-                                    <th></th>
-                                  </tr>
-                                </thead>
-                                <tbody *ngIf="blocks">
-                                    <tr *ngFor="let block of blocks.data; trackBy: blocks.trackBy">
-                                        <td width="5%"><i class="fa fa-cube"></i></td>
-                                        <td width="10%"><a routerLink="{{ networkURLPrefix }}/block/{{ block.id }}">{{ block.id }}</a></td>
-                                        <td class="is-hidden-mobile"><span *ngIf="block.attributes.datetime" rel="tooltip" title="{{ block.attributes.datetime | date:'medium'}}">{{ block.attributes.datetime | timeago }}</span></td>
-                                        <td>{{ block.attributes.count_extrinsics_signed }}</td>
-                                        <td>{{ block.attributes.count_events_module }}</td>
-                                        <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/block/{{ block.id }}">{{ 'DashBoard.Details' | translate }}</a></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <a routerLink="{{ networkURLPrefix }}/balances/transfer">
+                      <header class="card-header" style="border-bottom: 1px solid #dbdbdb;">
+                          <p class="card-header-title">
+                              {{ 'DashBoard.Last balance transfers' | translate }}
+                          </p>
+                          <a [routerLink]="" fragment="last-transfers" class="card-header-icon" aria-label="more options">
+                            <!-- <span class="icon">
+                              <i class="fa fa-exchange-alt" aria-hidden="true"></i>
+                            </span> -->
+                          </a>
+                      </header>
+                    </a>
+                      <div class="card-table">
+                          <div class="content">
+                              <table class="table is-fullwidth is-striped">
+                                  <thead>
+                                    <!-- <tr>
+                                      <th></th>
+                                      <th class="is-hidden-mobile">{{ 'DashBoard.Sender' | translate }}</th>
+                                      <th>{{ 'DashBoard.Destination' | translate }}</th>
+                                      <th>{{ 'DashBoard.Amount' | translate }}</th>
+                                      <th></th>
+                                    </tr> -->
+                                  </thead>
+                                  <tbody *ngIf="balanceTransfers">
+                                      <tr *ngFor="let balanceTransfer of balanceTransfers.data; trackBy: balanceTransfers.trackBy">
+                                          <td style="width:10%;">
+                                            <div class="transaction_table">
+                                              <span>Tx</span>
+                                            </div>
+                                          </td>
+                                          <td style="width:30%;">
+                                            <a>{{ formatBalance(balanceTransfer.attributes.value) | number:'1.0-15' }} {{ networkTokenSymbol }}</a><br>
+                                            <span>Amount</span>
+                                          </td>
+                                          <td>
+                                            <div id="fromtoTransaction">
+                                              <span>From</span>&nbsp;<a>{{balanceTransfer.attributes.sender.attributes.identity_display || balanceTransfer.attributes.sender.attributes.index_address || balanceTransfer.attributes.sender.attributes.address}}</a><br>
+                                              <span>To</span>&nbsp;<a>{{balanceTransfer.attributes.destination.attributes.identity_display || balanceTransfer.attributes.destination.attributes.index_address || balanceTransfer.attributes.destination.attributes.address}}</a>
+                                            </div>
+                                          </td>
+                                          <!-- <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/account/{{ balanceTransfer.attributes.sender.attributes.address }}" class="address-overview-format"><app-address [account]="balanceTransfer.attributes.sender"></app-address></a></td>
+                                          <td><a routerLink="{{ networkURLPrefix }}/account/{{ balanceTransfer.attributes.destination.attributes.address }}" class="address-overview-format"><app-address [account]="balanceTransfer.attributes.destination"></app-address></a></td> -->
+                                          
+                                          <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/balances/transfer/{{ balanceTransfer.id }}">{{ 'DashBoard.Details' | translate }}</a></td>
+                                      </tr>
+                                  </tbody>
+                              </table>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </section>
+          <section class="info-tiles">
+            <div class="tile is-ancestor has-text-centered">
+                <div class="tile is-parent column is-4 chart_responsive" *ngIf="totalTransactionsDaychart$ | async as chart">
+                    <article class="tile is-child box">
+                      <app-loading-box *ngIf="chart.is_loading"></app-loading-box>
+                      <app-chart *ngIf="!chart.is_loading"
+                            [chartData]="chart"
+                            [title]="'Analytics-Charts.Total transactions by day' | translate"
+                            height="200px"
+                            [themeColor] = 'networkColor'
+                            xAxisType="datetime"
+                      >
+                      </app-chart>
+                    </article>
                 </div>
-            </div>
-            <div class="column is-6 last-transfers" id="last-transfers">
-              <div class="card dashboard-card">
-                  <a routerLink="{{ networkURLPrefix }}/balances/transfer">
-                    <header class="card-header">
-                        <p class="card-header-title">
-                            {{ 'DashBoard.Last balance transfers' | translate }}
-                        </p>
-                        <a [routerLink]="" fragment="last-transfers" class="card-header-icon" aria-label="more options">
-                          <span class="icon">
-                            <i class="fa fa-exchange-alt" aria-hidden="true"></i>
-                          </span>
-                        </a>
-                    </header>
-                  </a>
-                    <div class="card-table">
-                        <div class="content">
-                            <table class="table is-fullwidth is-striped">
-                                <thead>
-                                  <tr>
-                                    <th></th>
-                                    <th class="is-hidden-mobile">{{ 'DashBoard.Sender' | translate }}</th>
-                                    <th>{{ 'DashBoard.Destination' | translate }}</th>
-                                    <th>{{ 'DashBoard.Amount' | translate }}</th>
-                                    <th></th>
-                                  </tr>
-                                </thead>
-                                <tbody *ngIf="balanceTransfers">
-                                    <tr *ngFor="let balanceTransfer of balanceTransfers.data; trackBy: balanceTransfers.trackBy">
-                                        <td width="5%"><i class="fa fa-exchange-alt"></i></td>
-                                        <td class="is-hidden-mobile"><a routerLink="{{ networkURLPrefix }}/account/{{ balanceTransfer.attributes.sender.attributes.address }}" class="address-overview-format"><app-address [account]="balanceTransfer.attributes.sender"></app-address></a></td>
-                                        <td><a routerLink="{{ networkURLPrefix }}/account/{{ balanceTransfer.attributes.destination.attributes.address }}" class="address-overview-format"><app-address [account]="balanceTransfer.attributes.destination"></app-address></a></td>
-                                        <td>{{ formatBalance(balanceTransfer.attributes.value) | number:'1.0-15' }} {{ networkTokenSymbol }}</td>
-                                        <td width="5%"><a class="button is-small is-primary" routerLink="{{ networkURLPrefix }}/balances/transfer/{{ balanceTransfer.id }}">{{ 'DashBoard.Details' | translate }}</a></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                <div class="tile is-parent column is-4 chart_responsive" *ngIf="averageBlocktimeDaychart$ | async as chart">
+                    <article class="tile is-child box">
+                      <app-loading-box *ngIf="chart.is_loading"></app-loading-box>
+                      <app-chart *ngIf="!chart.is_loading"
+                        [chartData]="chart"
+                        [analyticsChart]="averageBlocktimeDaychart$"
+                        [title]="'Analytics-Charts.Average blocktime by day' | translate"
+                        height="200px"
+                        [themeColor] = 'networkColor'
+                        xAxisType="datetime"
+                      >
+                      </app-chart>
+                    </article>
+                </div>
+                <div class="tile is-parent column is-4 chart_responsive" *ngIf="cumulativeAccountsDayChart$ | async as chart">
+                    <article class="tile is-child box">
+                      <app-loading-box *ngIf="chart.is_loading"></app-loading-box>
+                      <app-chart *ngIf="!chart.is_loading"
+                            [chartData]="chart"
+                            title="Active accounts by day"
+                            [title]="'Analytics-Charts.New accounts by day' | translate"
+                            height="200px"
+                            [themeColor] = 'networkColor'
+                            xAxisType="datetime"
+                      >
+                      </app-chart>
+                    </article>
                 </div>
             </div>
         </section>
-        <section class="info-tiles">
-          <div class="tile is-ancestor has-text-centered">
-              <div class="tile is-parent" *ngIf="totalTransactionsDaychart$ | async as chart">
-                  <article class="tile is-child box">
-                    <app-loading-box *ngIf="chart.is_loading"></app-loading-box>
-                    <app-chart *ngIf="!chart.is_loading"
-                           [chartData]="chart"
-                           [title]="'Analytics-Charts.Total transactions by day' | translate"
-                           height="200px"
-                           [themeColor] = 'networkColor'
-                           xAxisType="datetime"
-                    >
-                    </app-chart>
-                  </article>
-              </div>
-              <div class="tile is-parent is-hidden-mobile" *ngIf="averageBlocktimeDaychart$ | async as chart">
-                  <article class="tile is-child box">
-                    <app-loading-box *ngIf="chart.is_loading"></app-loading-box>
-                    <app-chart *ngIf="!chart.is_loading"
-                      [chartData]="chart"
-                       [analyticsChart]="averageBlocktimeDaychart$"
-                       [title]="'Analytics-Charts.Average blocktime by day' | translate"
-                       height="200px"
-                       [themeColor] = 'networkColor'
-                       xAxisType="datetime"
-                    >
-                    </app-chart>
-                  </article>
-              </div>
-              <div class="tile is-parent is-hidden-touch is-hidden-desktop-only" *ngIf="cumulativeAccountsDayChart$ | async as chart">
-                  <article class="tile is-child box">
-                    <app-loading-box *ngIf="chart.is_loading"></app-loading-box>
-                    <app-chart *ngIf="!chart.is_loading"
-                           [chartData]="chart"
-                           title="Active accounts by day"
-                           [title]="'Analytics-Charts.New accounts by day' | translate"
-                           height="200px"
-                           [themeColor] = 'networkColor'
-                           xAxisType="datetime"
-                    >
-                    </app-chart>
-                  </article>
-              </div>
-          </div>
-      </section>
+        </div>
     </div>
 </div>

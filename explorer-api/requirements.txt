@@ -1,8 +1,8 @@
 alembic==1.1.0
 atomicwrites==1.3.0
 attrs==19.1.0
-base58==1.0.3
-certifi==2019.6.16
+base58~=2.0.1
+certifi
 chardet==3.0.4
 decorator==4.4.0
 dictalchemy==0.1.2.7
@@ -15,10 +15,9 @@ importlib-metadata==0.19
 jsonschema==2.6.0
 Mako==1.0.14
 MarkupSafe==1.1.1
-meinheld==1.0.1
+meinheld==1.0.2
 more-itertools==6.0.0
-mysql-connector==2.1.7
-mysql-connector-python==8.0.15
+mysql-connector-python~=8.0.23
 pluggy==0.12.0
 protobuf==3.9.1
 py==1.8.0
@@ -28,7 +27,7 @@ python-editor==1.0.4
 python-mimeparse==1.6.0
 pytz==2018.9
 redis==3.2.1
-requests==2.22.0
+requests~=2.25.1
 requests-mock==1.7.0
 six==1.12.0
 SQLAlchemy==1.3.8
@@ -36,5 +35,5 @@ urllib3==1.25.3
 xxhash==1.3.0
 zipp==0.5.2
 
-scalecodec>=0.9.46
-substrate-interface>=0.9.13
+scalecodec>=0.10.62
+substrate-interface>=0.11.18

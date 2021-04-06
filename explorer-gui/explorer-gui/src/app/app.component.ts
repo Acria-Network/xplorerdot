@@ -43,7 +43,7 @@ export class AppComponent implements OnInit, OnDestroy {
   public currentNetwork;
   public showNavigation = false;
   public showSubmenus = true;
-  public langs = ['en', 'zh', 'ko', 'ru'];
+  public langs = ['en', 'zh', 'ko', 'ja', 'es', 'de', 'ru', 'uk', 'hi', 'pt', 'fr', 'tr', 'th'];
   public selectedLanguage = 'en';
 
   public networks: DocumentCollection<Network>;
@@ -66,7 +66,7 @@ export class AppComponent implements OnInit, OnDestroy {
     translate.addLangs(this.langs);
     translate.setDefaultLang('en');
 
-    this.selectedLanguage = translate.getBrowserLang().match(/en|zh|ko|ru/) ? translate.getBrowserLang() : 'en';
+    this.selectedLanguage = translate.getBrowserLang().match(/en|zh|ko|de|ru|uk|hi|pt|fr|ja|tr|th|es/) ? translate.getBrowserLang() : 'en';
     translate.use(this.selectedLanguage);
   }
 
@@ -98,6 +98,8 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   switchNetwork(network: Network) {
+    network.attributes.api_url_root = 'http://192.248.177.240:8080/api/v1/' + network.attributes.network_id;
+    console.log(network.attributes);
     this.appConfigService.setNetwork(network);
   }
 
@@ -113,9 +115,9 @@ export class AppComponent implements OnInit, OnDestroy {
   langsTitle(selectedLang: string) {
     switch (selectedLang) {
       case 'de':
-        return 'Deutsche';
+        return 'Deutsch';
       case 'fr':
-        return 'Française';
+        return 'Français';
       case 'it':
         return 'Italiano';
       case 'es':

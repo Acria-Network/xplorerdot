@@ -57,7 +57,7 @@ export class AnalyticsChartsComponent implements OnInit, OnDestroy  {
     this.networkSubscription = this.appConfigService.getCurrentNetwork().subscribe( network => {
 
       this.networkURLPrefix = this.appConfigService.getUrlPrefix();
-      this.networkColor = '#' + network.attributes.color_code;
+      this.networkColor = '#3498db';
 
       this.fragmentSubsription = this.activatedRoute.queryParams.subscribe(queryParams => {
         this.currentPage = +queryParams.page || 1;

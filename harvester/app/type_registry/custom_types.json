@@ -1,0 +1,30 @@
+{
+  "runtime_id": 100,
+  "types": {
+    "MyCustomType": "u64",
+    "CustomKeyStruct": {
+      "type": "struct",
+      "type_mapping": [
+         ["grandpa", "AccountId"],
+         ["babe", "AccountId"],
+         ["im_online", "AccountId"],
+         ["authority_discovery", "AccountId"],
+         ["parachains", "AccountId"]
+      ]
+    }
+  },
+  "versioning": [
+    {
+      "runtime_range": [0, 99],
+      "types": {
+        "MyCustomType": "u32"
+      }
+    },
+    {
+      "runtime_range": [100, null],
+      "types": {
+        "MyCustomType": "u64"
+      }
+    }
+  ]
+}

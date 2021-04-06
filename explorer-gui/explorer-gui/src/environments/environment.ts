@@ -26,7 +26,7 @@
 
 export const environment = {
   production: false,
-  jsonApiDiscoveryRootUrl: 'https://discovery.polkascan.io',
+  jsonApiDiscoveryRootUrl: 'https://discovery-32.polkascan.io',
   jsonApiRootUrl: null,
   network: {
     name: null,
@@ -37,17 +37,6 @@ export const environment = {
     tokenDecimals: null,
     colorCode: null
   }
-  // jsonApiDiscoveryRootUrl: null,
-  // jsonApiRootUrl: 'http://127.0.0.1:8000',
-  // network: {
-  //   name: 'Kusama',
-  //   networkId: 'kusama',
-  //   networkType: 'pre',
-  //   chainType: 'relay',
-  //   tokenSymbol: 'KSM',
-  //   tokenDecimals: 12,
-  //   colorCode: 'd32e79'
-  // }
 };
 
 /*

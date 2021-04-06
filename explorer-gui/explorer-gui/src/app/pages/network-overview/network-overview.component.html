@@ -24,6 +24,7 @@
                                     'explore-westend': network.attributes.network_id == 'westend' || network.attributes.network_id == 'westend-m2',
                                     'explore-kusama': ['kusama', 'kusama-cc1', 'kusama-cc2', 'kusama-cc3', 'kusama-cc4', 'kusama-cc5'].includes(network.attributes.network_id),
                                     'explore-polkadot': ['polkadot', 'polkadot-cc1', 'polkadot-cc2', 'polkadot-cc3', 'polkadot-cc4', 'polkadot-cc5'].includes(network.attributes.network_id),
+                                    'explore-rococo': network.attributes.network_id == 'rococo',
                                     'explore-edgeware': network.attributes.network_id == 'edgeware' || network.attributes.network_id == 'edgeware-berlin',
                                     'explore-edgeware-testnet': network.attributes.network_id == 'edgeware-testnet',
                                     'explore-straightedge': network.attributes.network_id == 'straightedge',

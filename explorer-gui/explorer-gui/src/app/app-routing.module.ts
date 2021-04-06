@@ -82,7 +82,7 @@ import {DemocracyPreimageDetailComponent} from './pages/democracy-preimage-detai
 import {ExtrinsicParamDownloadComponent} from './pages/extrinsic-param-download/extrinsic-param-download.component';
 
 const routes: Routes = [
-  { path: '', component: NetworkOverviewComponent, },
+  { path: '', redirectTo: '/polkadot', pathMatch: 'full'},
   { path: 'legal/privacy-policy', component: PrivacyPolicyComponent, },
   { path: 'legal/terms-of-use', component: TermsOfUseComponent, },
   // Redirect old URLs
@@ -104,6 +104,9 @@ const routes: Routes = [
   { path: 'pre/kusama-cc3/transaction/:hash', redirectTo: '/pre/kusama/transaction/:hash'},
   { path: 'pre/kusama-cc3/account/:id', redirectTo: '/pre/kusama/account/:id'},
   { path: 'pre/kusama-cc3', redirectTo: '/pre/kusama'},
+  { path: 'polkadot-cc1/transaction/:hash', redirectTo: '/polkadot/transaction/:hash'},
+  { path: 'polkadot-cc1/account/:id', redirectTo: '/polkadot/account/:id'},
+  { path: 'polkadot-cc1', redirectTo: '/polkadot'},
 
   {
     path: ':network',

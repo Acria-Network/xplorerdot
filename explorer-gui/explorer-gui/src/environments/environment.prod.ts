@@ -22,7 +22,7 @@
 
 export const environment = {
   production: true,
-  jsonApiDiscoveryRootUrl: 'https://discovery.polkascan.io',
+  jsonApiDiscoveryRootUrl: 'https://discovery-32.polkascan.io',
   jsonApiRootUrl: null,
   network: {
     name: null,

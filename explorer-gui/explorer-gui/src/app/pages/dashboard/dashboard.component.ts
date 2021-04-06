@@ -84,7 +84,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       // Retrieve charts
       if (environment.jsonApiDiscoveryRootUrl) {
 
-        this.networkColor = '#' + network.attributes.color_code;
+        this.networkColor = '#3498db';
 
         this.totalTransactionsDaychart$ = this.analyticsChartService.get('utcday-extrinsics_signed-sum-line-14');
         this.cumulativeAccountsDayChart$ = this.analyticsChartService.get('utcday-accounts_new-sum-line-14');
